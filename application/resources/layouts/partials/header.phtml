@@ -1,0 +1,265 @@
+<?php
+$front      = Zend_Controller_Front::getInstance(); 
+$action     = $front->getRequest()->getActionName();
+$module     = $front->getRequest()->getModuleName();
+$controller = $front->getRequest()->getControllerName();
+
+function humanTiming ($time)
+{
+
+    $time = time() - $time; // to get the time since that moment
+
+    $tokens = array (
+        31536000 => 'year',
+        2592000 => 'month',
+        604800 => 'week',
+        86400 => 'day',
+        3600 => 'hour',
+        60 => 'minute',
+        1 => 'second'
+    );
+
+    foreach ($tokens as $unit => $text) {
+        if ($time < $unit) continue;
+        $numberOfUnits = floor($time / $unit);
+        return $numberOfUnits.' '.$text.(($numberOfUnits>1)?'s':'');
+    }
+
+}
+?>
+<?php 
+    if(($module=="business" && $controller=="customer" && $action=="print") || ($module=="business" && $controller=="vendor" && $action=="print")){
+    } else {
+?>
+<div class="main-wrapper">
+<!-- TOP BAR -->
+<div class="top-bar">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3 col-md-3">
+                            <a href="#" class="left-toggle"><i class="icon-menu-2 "></i></a>
+                            <!-- LOGO -->
+                            <div class="branding">
+                                <span>
+                                <a href="<?php echo $this->sitePath."index"; ?>">
+
+                                <?php
+                                  $logSession = new Zend_Session_Namespace('sess_login');
+                                  if(isset($this->companyLogo) && !empty($this->companyLogo)) {
+                                    echo '<img src="'.$this->sitePath.$this->logopath.$this->companyLogo.'" width="150px" height="30px" style="width:150px; height:30px" title="'.ucfirst($logSession->name).'" alt="'.ucfirst($logSession->name).'" />';
+                                  } else {
+                                    echo ucfirst($logSession->name);
+                                  }
+                                ?>
+                               
+                                </a>
+                                 </span>
+                            
+                            </div>
+                        </div>
+
+                 <div class="col-sm-6 col-md-6 responsive-notification-mnu">
+
+                        <div class="col-sm-1 col-md-1 pull-right">
+                            <ul class="notification-bar">
+                                <li class="dropdown"><a href="<?php echo $this->sitePath."public/uploads/usermanual.pdf"; ?>" title="Usermanual" data-original-title="Usermanual" target="_blank" >
+                                    <i class="icon-file-pdf"></i>
+                                </a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-sm-1 col-md-1 pull-right">
+                            <ul class="notification-bar">
+                            <?php 
+                            if($logSession->type==2 || $logSession->type==3 || $logSession->proxy_type==2 || $logSession->proxy_type==3) {
+                             ?>
+                                <?php
+                                    }
+                                ?>
+                                <?php 
+                                    if($logSession->type==2 || $logSession->type==3 || $logSession->type==4 || $logSession->type==5 || $logSession->proxy_type==2 || $logSession->proxy_type==3 || $logSession->proxy_type==4 || $logSession->proxy_type==5) {
+                                ?>
+                                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <?php
+                                    if(isset($this->notifyUnseenMessage) && $this->notifyUnseenMessage!=0) {
+                                        if(($this->notifyUnseenMessage < 10)) { 
+                                            $padding = "padding:0px 7px;";
+                                        } else {
+                                            $padding = '';
+                                        }
+                                ?>
+                                <span class="count-noty" style="<?php echo $padding; ?>"><?php echo $this->notifyUnseenMessage; ?></span>
+                                <?php
+                                    }
+                                ?>
+                                <i class="icon-envelop"></i></a>
+                                    <div class="dropdown-menu">
+                                        <div class="dropdown-head">
+                                            <h6>You have <?php echo $this->notifyMessage; ?> messages</h6>
+                                        </div>
+                                        <?php 
+                                            if(isset($this->notifyHeaderMessage) && !empty($this->notifyHeaderMessage)) {
+                                        ?>
+                                        <ul class="msg-list">
+                                            <?php
+
+
+                                                foreach ($this->notifyHeaderMessage as $key => $message) {
+                                                  $time = strtotime($message['date']);
+
+                                                  $mid = base64_encode($key);
+                                                  if($message['seen']==1) {
+                                                    $class = 'not-seen-msg';
+                                                  } else {
+                                                    $class = 'seen-msg';
+                                                  }
+                                            ?>
+                                            <li class="clearfix"><a href="<?php echo $this->sitePath."default/notification/message/id/".$mid; ?>">
+                                            <span class="<?php echo $class; ?>">
+                                            <?php 
+                                                    echo ucfirst($message['subject']);
+                                            ?>
+                                            </span>
+                                            <span class="notification-meta"><?php echo humanTiming($time)." ago"; ?></span></a></li>
+                                            <?php 
+                                                }
+                                            ?>
+
+                                        </ul>
+                                        <?php
+                                            }
+                                        ?>
+                                        <div class="action-btn">
+                                            <a href="<?php echo $this->sitePath."default/notification/messages"; ?>"><button class="btn btn-block">View All</button></a>
+                                        </div>
+                                    </div>
+                                </li>
+                                <?php
+                                    }
+                                ?>
+                            </ul>
+                     </div>
+
+
+                    <div class="col-sm-6 col-md-6 pull-right">
+                            <?php 
+                            if($logSession->type==2 || $logSession->type==3 || $logSession->proxy_type==2 || $logSession->proxy_type==3) {
+                             ?>
+                                <?php
+                                    }
+                                ?>
+                                <?php 
+                                    if($logSession->type==2 || $logSession->type==3 || $logSession->type==4 || $logSession->type==5 || $logSession->proxy_type==2 || $logSession->proxy_type==3 || $logSession->proxy_type==4 || $logSession->proxy_type==5) {
+                                ?>
+                      <div id="sb-search" class="sb-search" >
+                            <form action="<?php echo $this->sitePath."notification/search" ?>" id="quick-search" name="quick-search" method="get">
+                                <input class="sb-search-input" placeholder="Receipt No, Txn no, Customer/Vendor, Description" type="text" value="" name="search" id="search">
+                                <input class="sb-search-submit" type="submit" value="">
+                                <span class="sb-icon-search"></span>
+                            </form>
+                        </div>
+                                <?php
+                                    }
+                                ?>
+                     </div>
+
+
+
+
+                       
+                        </div>
+
+<!--                <div class="col-sm-3 col-md-3">
+                        <div id="sb-search" class="sb-search" >
+                            <form action="<?php echo $this->sitePath."notification/search" ?>" id="quick-search" name="quick-search" method="get">
+                                <input class="sb-search-input" placeholder="Receipt No, Txn no, Customer/Vendor, Description" type="text" value="" name="search" id="search">
+                                <input class="sb-search-submit" type="submit" value="">
+                                <span class="sb-icon-search"></span>
+                            </form>
+                        </div>
+                    </div> -->
+
+                    <script type="text/javascript">
+                       function search() {
+                           var search = $("#search").val();
+                           alert(search);
+                       }
+                    </script>
+
+
+                    <div class="col-sm-3 col-md-3 clearfix responsive-log-mnu">
+
+                            <!-- ADMIN DRODOWN MENU -->
+                            <div class="loged-nav pull-right">
+
+                                <ul class="clearfix">
+                                    <li class="log-nav dropdown pull-right"><a class="dropdown-toggle clearfix" data-toggle="dropdown">
+                                            <span class="pull-left loged-user-name"><?php echo $logSession->username; ?></span><span class="logged-user-thumb pull-right"><img class="img-circle" src="<?php echo $this->imagesPath; ?>accounting-icon.png" alt="Admin"></span></a>
+                                        <div class="dropdown-menu">
+                                            <ul class="pull-right">
+                                                <li><a href="<?php echo $this->sitePath."index/update-profile"; ?>">Edit Profile</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="<?php echo $this->sitePath."index/logout"; ?>" class="logout-link"><i class="icon-lock-3"></i> Logout</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<div class="main-container">
+
+            <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- SHORTCUT BAR -->
+                            <div class="breadcrumb shortcut-bar">
+                                <ul class="shortcut-items">
+                                    <?php 
+                                    $disableStatus = '';
+                                    if(isset($logSession->type) && ((($logSession->type==0 || $logSession->type==1) && !isset($logSession->proxy_type) && empty($logSession->proxy_type)) && ($logSession->companySet!=1)) || ($logSession->status==2)) {
+                                            $disableStatus = "disabled";
+                                    }
+                                    $activeStatus='';
+                                    ?>
+                                    <li><a href="<?php echo $this->sitePath."default/index/dashboard"; ?>" class="<?php echo $disableStatus; ?> <?php if(($action=="dashboard") || ($controller=='notification')){echo $activeStatus="active";}?>"><!--<span class="count-noty">12</span>--><i class="icon-screen-3"></i><span class="shortcut-label">Dashboard</span></a></li>
+                                    <?php 
+                                       if(isset($logSession->type) && ($logSession->type!=4 && $logSession->type!=5 && $logSession->proxy_type!=4 && $logSession->proxy_type!=5)) {
+                                    ?>
+                                    <li><a href="<?php echo $this->sitePath."reports"; ?>" class="<?php echo $disableStatus; ?> <?php if(($module=="reports")){echo $activeStatus="active";}?>"><i class="icon-stats-up"></i><span class="shortcut-label">Reports</span></a></li>
+                                    <?php
+                                        }
+                                    ?>
+                                    <li><a href="<?php echo $this->sitePath."transaction/invoice"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="transaction")&&(($controller=="invoice") || ($controller=="credit"))){echo $activeStatus="active";}?>"><i class="icon-indent-right"></i><span class="shortcut-label">Invoice / Credit</span></a></li>
+                                    <li><a href="<?php echo $this->sitePath."transaction/income"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="transaction")&&($controller=="income")){echo $activeStatus="active";}?>"><i class="icon-coin"></i><span class="shortcut-label">Income</span></a></li>
+                                    <li><a href="<?php echo $this->sitePath."transaction/expense"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="transaction")&&($controller=="expense")){echo $activeStatus="active";}?>"><i class="icon-credit-2"></i><span class="shortcut-label">Expenses </span></a></li>
+                                    <li><a href="<?php echo $this->sitePath."business/customer"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="business")&&($controller=="customer")){echo $activeStatus="active";}?>"><i class="icon-user"></i><span class="shortcut-label">Customers</span></a></li>
+                                    <li><a href="<?php echo $this->sitePath."business/vendor"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="business")&&($controller=="vendor")){echo $activeStatus="active";}?>"><i class="icon-user-4"></i><span class="shortcut-label">Vendors</span></a></li>
+                                    <li><a href="<?php echo $this->sitePath."transaction/journal"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="transaction")&&($controller=="journal")){echo $activeStatus="active";}?>"><i class="icon-calculate"></i><span class="shortcut-label">Journal Entries</span></a></li>
+                                    <li><a href="<?php echo $this->sitePath."transaction/fixedassets"; ?>" class="<?php echo $disableStatus; ?><?php if(($module=="transaction")&&($controller=="fixedassets")){echo $activeStatus="active";}?>"><i class="icon-archive"></i><span class="shortcut-label">Fixed Assets</span></a></li>
+                                    
+                                    <?php 
+                                       if(isset($logSession->type) && ($logSession->type==0 || $logSession->type==1)) {
+                                    ?>
+                                    <li><a href="<?php echo $this->sitePath."developer"; ?>" class="<?php if((($module=="default")&&($controller=="developer")) || ($action=='registration')){echo $activeStatus="active";}?>"><i class="icon-console"></i><span class="shortcut-label">Developer</span></a></li>
+                                    <?php
+                                        }
+                                    ?>
+                                    <?php 
+                                       if(isset($logSession->type) && ($logSession->type==2 || $logSession->proxy_type==2)) {
+                                    ?>
+                                    <li><a href="<?php echo $this->sitePath."settings"; ?>" class=<?php echo $disableStatus; ?> <?php if(($module=="default")&&($controller=="settings" || $controller=='import')){echo $activeStatus="active";}?>><i class="icon-cogs"></i><span class="shortcut-label">Settings</span></a></li>
+                                    <?php
+                                        }
+                                    ?>
+                                </ul>
+                            </div>
+                           
+                    </div>
+                </div>
+<?php 
+    }
+?>

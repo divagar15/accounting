@@ -1,0 +1,609 @@
+{"Assets":{"Current Assets":{"Cash and Cash Equivalents":{"1":"Cash in Hand","2":"Petty Cash","3":"Bank - Checking Account","4":"Bank - Savings Account","5":"Bank - Money Market Account","6":"Bank - Fixed Deposits","7":"Other Bank Account"},"Short Term Investments":{"8":"GIC & Term Deposits","9":"Certificate of Deposit","10":"Brokerage Account","11":"Mutual Fund Account","12":"Short Term Equities","13":"Bonds","14":"T-Bills","15":"Other Short-Term Investments"},"Inventories":{"16":"Inventory on Hand","17":"Work-In- Progress Inventory","18":"Other Inventories"},"Trade Receivables":{"19":"Trade Receivables","20":"Allowance for Bad Debt","21":"Other Trade Receivables"},"Other Receivables":{"22":"Notes & Loans Receivable","23":"Grant Receivables - Government","24":"Grant Receivables - Corporate","25":"Sponsorship Receiveables","26":"Advertiser Receivables","27":"Sales Tax Receivable","28":"Other Account Receivables"},"Other Current Assets":{"29":"Taxes Recoverable\/Refundable","30":"Future (deferred) Incomes Taxes","31":"Due From Related Party","32":"Prepaid Expenses","33":"Prepaid Interest","34":"Employee Advances","35":"Accrued Investment Income","36":"Accrued Revenue","37":"Other Current Assets"}},"Non-Current Assets":{"Fixed Assets - Land":{"38":"Leasehold Land","39":"Accumulated Depreciation - Leasehold Land","40":"Freehold Land","41":"Accumulated Depreciation - Freehold Land","42":"Land Improvements","43":"Accumulated Depreciation - Land Improvements","44":"Other Fixed Assets - Land"},"Fixed Assets - Buildings":{"45":"Leasehold Buildings","46":"Accumulated Depreciation - Leasehold Buildings","47":"Freehold Buildings","48":"Accumulated Depreciation - Freehold Buildings","49":"Buildings Improvements","50":"Accumulated Depreciation - Building Improvements","51":"Quays and Dry Docks","52":"Accumulated Depreciation - Quays and Dry Docks","53":"Plant and machinery","54":"Accumulated Depreciation - Plant and Machinery","55":"Other Fixed Assets - Buildings"},"Fixed Assets - Machinery  and Equipment":{"56":"Machinery","57":"Accumulated Depreciation - Machinery","58":"Furniture and Fittings","59":"Accumulated Depreciation - Furniture and Fittings","60":"Tools and Workshop Equipment","61":"Accumulated Depreciation - Tools and Workshop Equipment","62":"Office Equipment","63":"Accumulated Depreciation - Office Equiment","64":"Network Equiment","65":"Accumulated Depreciation - Network Equiment","66":"Computer Equiment","67":"Accumulated Depreciation - Network Equiment","68":"Other Fixed Assets - Machinery and Equipment"},"Fixed Assets - Motor Vehicles":{"69":"Bicycle","70":"Accumulated Depreciation - Bicycle","71":"Motorcyle","72":"Accumulated Depreciation - Motorcycle","73":"Cars","74":"Accumulated Depreciation - Cars","75":"Trucks","76":"Accumulated Depreciation - Trucks","77":"Buses","78":"Accumulated Depreciation - Buses","79":"Marine Vessels","80":"Accumulated Depreciation - Marine Vessels","81":"Airplanes","82":"Accumulated Depreciation - Airplanes","83":"Helicopters","84":"Accumulated Depreciation - Helicopters","85":"Other Fixed Assets - Motor Vehicles"},"Other Fixed Assets":{"86":"Construction In Progress","87":"Works of Arts or Historical Treasures","88":"Other Tangible Capital Assets","89":"Accumulated Depreciation - Other Tangible Capital Assets","90":"Other Fixed Assets"},"Investment Properties":{"91":"Investment in Leasehold Land","92":"Accumulated Depreciation - Investment in Leasehold Land","93":"Investment in Freehold Land","94":"Accumulated Depreciation - Investment in Freehold Land","95":"Investment in Land Improvements","96":"Accumulated Depreciation - Investment in Land Developments","97":"Investment in Buildings","98":"Accumulated Depreciation - Investment in Buildings","99":"Other Investment Properties"},"Investment in Related Companies":{"100":"Investment in Subsidiaries","101":"Allowances for Impairment Losses - Investment in Subsidiaries","102":"Investment in Associates","103":"Allowances for Impairment Losses - Investment in Associates","104":"Investment in Join Ventures","105":"Allowances for Impairment Losses - Investment in Joint Ventures","106":"Other Investment in Related Companies"},"Long term Investments":{"108":"Sovereign\/ Government Bonds","109":"Corporate Bonds","110":"Listed Equities (Long Term)","111":"Gold","112":"Mutual Fund Investments","113":"Hedge Funds Investment","114":"Private Equity Investment","115":"Annuity","116":"Whole Life Insurance","117":"Universal Life Insurance","118":"Term Life Insurance","119":"Other Long Term Investments"},"Intangible Assets":{"120":"Goodwill","121":"Accumulated Amortization - Goodwill","122":"Trademarks","123":"Accumulated Amortization - Trademarks","124":"Patents","125":"Accumulated Amortization - Patents","126":"Incoporation Rights","127":"Accumulated Amortization - Incoporation Rights","128":"Resource Rights","129":"Accumulated Amortization - Resource Rights","130":"Telecommuncation Licenses","131":"Software","132":"Software In Development","133":"Other Intangible Assets"},"Deferred Tax Assets":{"134":"Defereed Tax - Fixed Assets","135":"Defereed Tax - Intangible Assets","136":"Deferred Income Tax","137":"Other Payables and Accruals","138":"Tax losses Carried Forward","139":"Other Deferred Tax Assets"}}},
+
+  "Liabilities": {
+    "Current Liabilities": {
+      "Current Bank Debt": {
+        "1": "Bank Overdraft",
+        "2": "Bank Line of Credit",
+        "3": "Bank Revolving Credit",
+        "4": "Credit Card",
+        "5": "Other Current Bank Debt"
+      },
+      "Current Debt": {
+        "6": "Shareholder Loan - Short Term",
+        "7": "Amount Due to Associates",
+        "8": "Amount Due to Subsidiaries",
+        "9": "Amount Due to Join Ventures",
+        "10": "Amount Due to Other Related Party",
+        "11": "Finance Lease Liabilities -Short Term",
+        "12": "Other Short Term Debt"
+      },
+      "Trade Creditors": {
+        "13": "Trade Creditors",
+        "14": "Account Payable - Accrual Inventory",
+        "15": "Other Trade Creditors"
+      },
+      "Tax Payables": {
+        "16": "Sales Tax Payables",
+        "17": "Income Tax Payable",
+        "18": "Tax Clearing Account",
+        "19": "Witholding Tax Payables",
+        "20": "Luxury Car Tax Payables",
+        "21": "Fuel Tax Credits Accrrued",
+        "22": "Other Tax payables"
+      },
+      "Deposits Received": {
+        "23": "Client Deposits Received",
+        "24": "Rental Deposits Received",
+        "25": "Merchant Deposits Received"
+      },
+      "Other Account Payables": {
+        "26": "Deposits Received",
+        "27": "Payroll Accruals Payable",
+        "28": "Prepaid Income",
+        "29": "Advance Payment from Customers",
+        "30": "Client Deposits",
+        "31": "Dividend Payables",
+        "32": "Import Duty Payables",
+        "33": "Other Account Payables"
+      },
+      "Other Current Liabilities": {
+        "34": "Annual Leave Accruals",
+        "35": "Operating Expenses Accruals",
+        "36": "Interest Payable Accruals",
+        "37": "Superannuation Liability",
+        "38": "Employee Benefits Liabilities",
+        "39": "Provisions of Warranty Obligation",
+        "40": "Other Current Liabilities"
+      }
+    },
+    "Non-Current Liabilities": {
+      "Long Term Debts": {
+        "41": "Mortgages",
+        "42": "Bank Term Loan",
+        "43": "Home Equity Loans",
+        "44": "Shareholder Loan - Long term",
+        "45": "Finance Lease Liabilities - Long Term",
+        "46": "Other Long Term Debts"
+      },
+      "Debt Securities": {
+        "47": "Convertible Bonds",
+        "48": "Notes and Bonds",
+        "49": "Secured Notes and Bonds",
+        "50": "Unsecured Notes and Bonds",
+        "51": "Other Debt Securities"
+      },
+      "Other Long Term Liabilities": {
+        "52": "Amount Due to Associates (Long Term)",
+        "53": "Amount Due to Subsidiaries (Long Term)",
+        "54": "Amount Due to Join Ventures (Long Term)",
+        "55": "Amount Due to Other Related Party (Long Term)",
+        "56": "Employee Benefits Liabilities (Long Term)",
+        "57": "Other Long Term Liabilities"
+      },
+      "Deferred Tax Liabilities": {
+        "58": "Deferred Tax - Fixed Assets",
+        "59": "Deferred Tax Liabilities- Interest in Associates",
+        "60": "Deferred Tax Liabilities - Trades and Other Receivables"
+      }
+    }
+  },
+    "Income": {
+    "Revenue": {
+      "Agriculture": {
+        "1": "Agricultural Program Payments",
+        "2": "Commodity Credit Loans",
+        "3": "Cooperative Distributions",
+        "4": "Crop Insurance Proceeds",
+        "5": "Crop Sales",
+        "6": "Custom Hire Income",
+        "7": "Farmers Market Sales",
+        "8": "Livestock Sales",
+        "9": "Other Agriculture Revenue"
+      },
+      "Art, Craft and Hobbies": {
+        "10": "Sale of Work of Arts",
+        "11": "Sale of Historical Treasures",
+        "12": "Sale of Collectors Items",
+        "13": "Sale of Crafts",
+        "14": "Other Art, Craft and Hobbies Revenue"
+      },
+      "Commissions": {
+        "15": "Commission Income",
+        "16": "Commission Adjustments",
+        "17": "Other Commission Income"
+      },
+      "Event Management": {
+        "18": "AdvertisersIncome",
+        "19": "Sponsorship Income",
+        "20": "Booth Rental Income",
+        "21": "Event Ticket Sales",
+        "22": "Particupant Fees",
+        "23": "Participant Membership",
+        "24": "Event Related Publication Income",
+        "25": "Special Event Income",
+        "26": "Other Event Management Revenue"
+      },
+      "Professional Services": {
+        "27": "Accounting Services",
+        "28": "Audit Fees",
+        "29": "Bookkeeping Services",
+        "30": "Consultings Fees",
+        "31": "Legal Fees",
+        "32": "Non-Medical Income",
+        "33": "Other Medical Income",
+        "34": "Outsourcing Services",
+        "35": "Payroll Services",
+        "36": "Recruitment Services",
+        "37": "Tax Preparation Services",
+        "38": "Training Services",
+        "39": "Other Professional Services"
+      },
+      "Property Development and Management": {
+        "40": "Construction Income",
+        "41": "Lodging Fees",
+        "42": "Property Advisory Fees",
+        "43": "Property Management Fees",
+        "44": "Rental and Related Income",
+        "45": "Sale of Developed Properties",
+        "46": "Service Residence Rental and Related Income",
+        "47": "Trading Properties",
+        "48": "Other Property Development and Management Revenue"
+      },
+      "Sales Products & Services": {
+        "49": "Assessments",
+        "50": "Bar Sales",
+        "51": "Coaching",
+        "52": "Design Income",
+        "53": "Facial Treatments",
+        "54": "Facilitation",
+        "55": "Food & Beverage Sales",
+        "56": "Gift Shop & Vending Sales",
+        "57": "Gross Trucking Income",
+        "58": "Haircut Services",
+        "59": "Hair Coloring Services",
+        "60": "Hair Grooming Services",
+        "61": "Installation Services",
+        "62": "Inventory Sales",
+        "63": "Labor Income",
+        "64": "Maintenance Services",
+        "65": "Manicure/Pedicure",
+        "66": "Massage Services",
+        "67": "Parts & Materials Sales",
+        "68": "Personal Trainer Services",
+        "69": "Photo & Video Services Income",
+        "70": "Product Sales",
+        "71": "Royalties Received",
+        "72": "Sales - Retail Products",
+        "73": "Sales - Software",
+        "74": "Sales - Software Subscription",
+        "75": "Sales - Support and Maintenance",
+        "76": "Security Sales",
+        "77": "Seminars",
+        "78": "Shipping & Delivery Income",
+        "79": "Special Services",
+        "80": "Tape & Book Sales",
+        "81": "Other Products & Services"
+      },
+      "Other Revenue": {
+        "82": "Other Revenue"
+      }
+    },
+    "Operating Income": {
+      "Fees and Charges": {
+        "83": "Finance Charge Income",
+        "84": "Late Fees Collected",
+        "85": "Other Fees and Charges Income"
+      },
+      "Interest Income": {
+        "86": "Interest Income - Fixed Deposits",
+        "87": "Interest Income from Subsidiaries",
+        "88": "Interest Income from Associates",
+        "89": "Interest Income from Joint Ventures",
+        "90": "Interest Income from Investee Companies and Others",
+        "91": "Other Interest Income"
+      },
+      "Investments": {
+        "92": "Investments - Dividends",
+        "93": "Investments - Interest",
+        "94": "Investments - Asset Sales",
+        "95": "Investments - Other Investment Revenue",
+        "96": "Other Investment Income"
+      },
+      "Other Operating Income": {
+        "97": "Gain on disposal of investment properties",
+        "98": "Gain on disposal/redemption of financial assets",
+        "99": "Gain from change of ownership interest in subsidiaries",
+        "100": "Gain from change of ownership interest in joint ventures",
+        "101": "Gain from change of ownership interest in associates",
+        "102": "Gain from change of ownership interest in Investee Companies",
+        "103": "Foreign exchange gain",
+        "104": "Gain on disposal of fixed assets",
+        "105": "Rental Income",
+        "106": "Receipt of settlement of insurance claim",
+        "107": "Other Operating Income"
+      }
+    },
+    "Other Income": {
+      "Non Profit Income": {
+        "108": "Benevolence Offerings",
+        "109": "Building Fund",
+        "110": "Children's Church Offering",
+        "111": "Direct Public Grants - Corporate and Business",
+        "112": "Direct Public Grants - Foundation and Trust Grants",
+        "113": "Direct Public Grants - Nonprofit Organization Grants",
+        "114": "Direct Public Support - Corporate Contributions",
+        "115": "Direct Public Support - Donated Art",
+        "116": "Direct Public Support - Donated Professional Fees or Facilities",
+        "117": "Direct Public Support - Gifts in Kind",
+        "118": "Direct Public Support - Business Contributions",
+        "119": "Direct Public Support - Individual Contributions",
+        "120": "Direct Public Support - Legacies and Bequests",
+        "121": "Direct Public Support - Uncollectible Pledges",
+        "122": "Direct Public Support - Volunteer Services",
+        "123": "General Fund",
+        "124": "Government Contracts - Agency",
+        "125": "Government Contracts - Federal",
+        "126": "Government Contracts - Local Government",
+        "127": "Government Contracts - State or Provincial",
+        "128": "Government Grants - Agency",
+        "129": "Government Grants - Federal",
+        "130": "Government Grants - Local Government",
+        "131": "Government Grants - State or Provincial",
+        "132": "Indirect Public Support",
+        "133": "Mission Offerings",
+        "134": "Program Income - Member Assessments",
+        "135": "Program Income - Membership Dues",
+        "136": "Program Income - Program Service Fees",
+        "137": "Pledges",
+        "138": "Youth Group",
+        "139": "Other Non Profit Income"
+      },
+      "Other Income": {
+        "140": "Other Income"
+      }
+    }
+  },
+    "Expense": {
+    "Cost of Goods": {
+      "Purchases": {
+        "1": "Purchases of Raw Material",
+        "2": "Purchases of Products",
+        "3": "Purchases – Food & Beverage",
+        "4": "Purchases – Software for Resale",
+        "5": "Purchases – Hardware for Resale",
+        "6": "Purchases – Parts & Materials",
+        "7": "Purchases – Resale Items",
+        "8": "Restaurant Supplies",
+        "9": "Construction Materials",
+        "10": "Other Purchases"
+      },
+      "Labour Cost": {
+        "11": "Production Team Salaries",
+        "12": "Production Team Bonuses",
+        "13": "Production Team Employee Beneifts",
+        "14": "Other Direct Salaries and Benefits"
+      },
+      "Contractors": {
+        "15": "Contractor Fees",
+        "16": "Other Contractor Cost"
+      },
+      "Sales and Marketing Cost": {
+        "17": "Direct Sales Commissions",
+        "18": "Direct Marketing Cost",
+        "19": "Other Sales and Marketing Cost"
+      },
+      "Other Direct Overhead Cost": {
+        "20": "Manufacturing Plant Utilities - Water",
+        "21": "Manufacturing Plant Utilities - Electricity",
+        "22": "Manufacturing Plant Utilities - Gas/ Fuel",
+        "23": "Equipment Repair and Maintenance Cost",
+        "24": "Equipment Depreciation Cost",
+        "25": "Equipment Rental",
+        "26": "Freight & Shipping Costs",
+        "27": "Show and Exhibitor Fees",
+        "28": "Studio and Location Costs",
+        "29": "Tools and Craft Supplies",
+        "30": "Other Direct Overhead Cost"
+      }
+    },
+    "Operating Expenses": {
+      "Agriculture": {
+        "31": "Chemicals Purchased",
+        "32": "Custom Hire & Contract Labor",
+        "33": "Feed Purchased",
+        "34": "Fertilizers & Lime",
+        "35": "Freight & Trucking",
+        "36": "Gasoline, Fuel & Oil",
+        "37": "Seed & Plants Purchased",
+        "38": "Vaccines & Medicines",
+        "39": "Veterinary, Breeding, Medicine",
+        "40": "Other Agriculture Expense"
+      },
+      "Books and Subscriptions": {
+        "41": "Books Purchases",
+        "42": "Magazine Purchases",
+        "43": "Newspaper Subscription",
+        "44": "Lifestyle Magazine Subscription",
+        "45": "Business Magazine Subscription",
+        "46": "Other Magazine Subscription",
+        "47": "Magazine Subscription",
+        "48": "Journal Publication Subscription",
+        "49": "Other Subscription Fees"
+      },
+      "Computer Expenses": {
+        "50": "Computer Accessories Purchases",
+        "51": "Computer Maintenance Charges",
+        "52": "Computer Repair Expenses",
+        "53": "Computer Expenses",
+        "54": "Other Computer Expenses"
+      },
+      "Gifts and Entertainment": {
+        "55": "Gifts",
+        "56": "Gifts - Clients",
+        "57": "Gifts - Sponsors",
+        "58": "Gifts - Speakers",
+        "59": "Entertainment Expenses",
+        "60": "Entertainment Expenses - Client",
+        "61": "Entertainment Expenses - Sponsors",
+        "62": "Entertainment Expenses - Speakers",
+        "63": "Other Gifts and Entertainment"
+      },
+      "Insurance": {
+        "64": "Insurance - Life & Disability",
+        "65": "Insurance - Worker's Compensation",
+        "66": "Insurance - Professional Liability",
+        "67": "Insurance - General Liability",
+        "68": "Insurance - Health",
+        "69": "Other Insurance Premium"
+      },
+      "Marketing & Promotion": {
+        "70": "Advertising - Billboard",
+        "71": "Advertising - TV",
+        "72": "Advertising - Radio",
+        "73": "Advertising - Print",
+        "74": "Promotional Activities",
+        "75": "Promotional Sponsorship",
+        "76": "Sales Commission",
+        "77": "Other Marketing and Promotion Expenses"
+      },
+      "Postage and Courier": {
+        "78": "Postage Expenses",
+        "79": "Courier Expenses",
+        "80": "Other Postage and Courier Expenses"
+      },
+      "Rental Expenses": {
+        "81": "Office Rental",
+        "82": "Warehouse Rental",
+        "83": "Retail Space Rental",
+        "84": "Manufacturing Plant Rental",
+        "85": "Event Location Rental",
+        "86": "Other Rental Expenses"
+      },
+      "Repair and Maintenance": {
+        "87": "Office Janitorial Expenses",
+        "88": "Equipment Repair and Maintenance",
+        "89": "General Repair and Maintenance",
+        "90": "Plumbing Services",
+        "91": "Air-Condition Repair and Maintenance",
+        "92": "Electrical Repair and Maintenance",
+        "93": "Other Repair and Maintenance Expenses"
+      },
+      "Research and Development": {
+        "94": "Research & Development Cost",
+        "95": "Trademark Application Cost",
+        "96": "Patent Application Cost",
+        "97": "Other R&D Cost"
+      },
+      "Salaries and Benefits": {
+        "98": "Salaries",
+        "99": "Commissions",
+        "100": "Bonuses",
+        "101": "Other Payroll Expenses",
+        "102": "Employer - CPF Contributions",
+        "103": "Employee Community Expenses",
+        "104": "Employee Training Cost",
+        "105": "Annual Leave Expense",
+        "106": "Retirement Benefits",
+        "107": "Pensions",
+        "108": "Other Salaries and Benefit Expenses"
+      },
+      "Shipping and Delivery": {
+        "109": "Shipping & Delivery Costs",
+        "110": "Freight Charges",
+        "111": "Other Shipping & Delivery Expenses"
+      },
+      "Stationery and Printing": {
+        "112": "Stationeries Purchases",
+        "113": "Paper Purchases",
+        "114": "Printer Ink Purchases",
+        "115": "Office Supplies Expenses",
+        "116": "Printing Cost",
+        "117": "Photostating Cost",
+        "118": "Other Stationery and Printing Expenses"
+      },
+      "Telecommunication": {
+        "119": "Broadband Hardware Purchases",
+        "120": "Telephone Hardware Purchase",
+        "121": "Mobile Phone Purchases",
+        "122": "Broadband Subscription Fees",
+        "123": "Telephone Subscription Fees",
+        "124": "Mobile Subscription Fees",
+        "125": "Cable TV Subscription Fees",
+        "126": "Telecommunication Hardware Purchases",
+        "127": "Telecommunication Subscription Fees",
+        "128": "Other Telecommunication Expenses"
+      },
+      "Travel and Allowances": {
+        "129": "Travel Expense - Flight",
+        "130": "Travel Expense - Rail",
+        "131": "Travel Expense - Car",
+        "132": "Travel Expense - Taxi/ Bus",
+        "133": "Travel Expenses - All transportation",
+        "134": "Lodging Expenses - Hotel",
+        "135": "Lodging Expenses - Service Apartments",
+        "136": "Parking Expenses",
+        "137": "Meal Allowance",
+        "138": "Laundry Allowances",
+        "139": "Daily Allowances (Per Diem)",
+        "140": "Hardship Allowances",
+        "141": "Telecommunication Allowances",
+        "142": "Other Travel and Allowances"
+      },
+      "Vehichle Expenses": {
+        "143": "Road Tax",
+        "144": "Vehicle Insurance Premium",
+        "145": "Vehicle Repair and Maintenance",
+        "146": "Fuel Expenses",
+        "147": "Traffic Fines",
+        "148": "Other Vehicle Expense"
+      },
+      "Utilities Expenses": {
+        "149": "Electricity Utilities Charges",
+        "150": "Gas Utilities Charges",
+        "151": "Heating Utilities Charges",
+        "152": "Water Utilities Charges",
+        "153": "Other Utilities Expenses"
+      }
+    },
+    "Non-Operating Expenses": {
+      "Depreciation": {
+        "154": "Depreciation - Leasehold Land",
+        "155": "Depreciation - Freehold Land",
+        "156": "Depreciation - Land Improvements",
+        "157": "Depreciation - Leasehold Building",
+        "158": "Depreciation - Freehold Building",
+        "159": "Depreciation - Building Improvements",
+        "160": "Depreciation - Quays and Dry Docks",
+        "161": "Depreciation - Plant and Machinery",
+        "162": "Depreciation - Machinery",
+        "163": "Depreciation - Furniture & Fittings",
+        "164": "Depreciation - Tools and Workshop Equipment",
+        "165": "Depreciation - Office Equipment",
+        "166": "Depreciation - Network Equipment",
+        "167": "Depreciation - Bicycle",
+        "168": "Depreciation - Motorcycle",
+        "169": "Depreciation - Cars",
+        "170": "Depreciation - Trucks",
+        "171": "Depreciation - Buses",
+        "172": "Depreciation - Marine Vessels",
+        "173": "Depreciation - Airplanes",
+        "174": "Depreciation - Helicopter",
+        "175": "Depreciation - Investment in Leasehold Land",
+        "176": "Depreciation - Investment in Freehold Land",
+        "177": "Depreciation - Investment in Land Improvements",
+        "178": "Depreciation - Investment in Buildings",
+        "179": "Other Depreciation Expenses"
+      },
+      "Donations and Contributions": {
+        "180": "Donations - Corporate CSR",
+        "181": "Donations - Non Profit Organisation",
+        "182": "Donations - Non Government Organisation",
+        "183": "Political Contributions",
+        "184": "Other Donations and Contributions"
+      },
+      "Fees and Charges": {
+        "185": "Business Licenses Fees",
+        "186": "Permit Fees",
+        "187": "Business Registration Fees",
+        "188": "Late Fees Paid",
+        "189": "Bank Charges",
+        "190": "Membership Fees",
+        "191": "Other Fees and Charges"
+      },
+      "Financing Expenses": {
+        "192": "Interest Expense - Vehicle",
+        "193": "Interest Expense - Bank Long Term Debt",
+        "194": "Interest Expense - Bank Overdraft",
+        "195": "Interest Expense - Other Bank Debt",
+        "196": "Interest Expense - Notes and Bonds",
+        "197": "Other Financing Expenses"
+      },
+      "Non-Profit": {
+        "198": "Awards & Grants",
+        "199": "Evangelism & Special Events",
+        "200": "Ministry Expenses",
+        "201": "Other Non-Profit Expenses"
+      },
+      "Professional Fees": {
+        "202": "Accounting Fees",
+        "203": "Audit Fees",
+        "204": "Bookeeping Fees",
+        "205": "Company Secretariat Fees",
+        "206": "Consultation Fees",
+        "207": "Legal Fees",
+        "208": "Payroll Services",
+        "209": "Tax Preparation Services",
+        "210": "Other Professional Fees"
+      },
+      "Provisions": {
+        "211": "General Provision for Doubtful Debt",
+        "212": "Specific Provision for Doubtful Debt",
+        "213": "Other General Provision"
+      },
+      "Taxes": {
+        "214": "Property Tax",
+        "215": "Real Estate Gain Tax",
+        "216": "Income Tax",
+        "217": "Stamp Duty",
+        "218": "Other Tax Expenses"
+      },
+      "Write-Off": {
+        "219": "Write Off for Bad Debts",
+        "220": "Write Off for Impairements",
+        "221": "Other Write Off Losses"
+      },
+      "Other Expenses": {
+        "222": "Miscellaneous Expense",
+        "223": "Other Expenses"
+      }
+    }
+  },
+    "Equity": {
+    "Paid Share Capital": {
+      "Ordinary Shares": {
+        "1": "Issued and Paid Ordinary Shares",
+        "2": "Rights Issues - Ordinary Shares",
+        "3": "Share Options - Ordinary Shares",
+        "4": "Other Ordinary Shares"
+      },
+      "Preferred Shares": {
+        "5": "Issued and Paid Preferred Shares",
+        "6": "Rights Issues - Preferred Shares",
+        "7": "Share Options - Preferred Shares",
+        "8": "Other Preferred Shares"
+      },
+      "Warrants": {
+        "9": "Share Warrants Oustanding",
+        "10": "Other Warrants"
+      }
+    },
+    "Owner's Capital": {
+      "Owner's Investment": {
+        "11": "Owner's Cash Investment",
+        "12": "Owner's Non-Cash Investment",
+        "13": "Other Owner's Investment"
+      },
+      "Owner's Drawings": {
+        "14": "Owner's Drawings",
+        "15": "Other Owner's Drawings"
+      }
+    },
+    "Reserves": {
+      "Revenue Reserves": {
+        "16": "Retained Earnings",
+        "17": "Current Year Earnings",
+        "18": "Other Revenue Reserves"
+      },
+      "Other Reserves": {
+        "19": "Reserves for Own Shares",
+        "20": "Capital Reserve",
+        "21": "Equity Compensation Reserve",
+        "22": "Hedging Reserve",
+        "23": "Foreign Currency Translation Reserve",
+        "24": "Avaialble-For-Sale Reserve"
+      }
+    }
+  }
+
+}

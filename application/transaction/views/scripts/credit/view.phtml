@@ -1,0 +1,726 @@
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li><a href="<?php echo $this->sitePath."transaction/credit/"; ?>">Credit Note</a></li>
+   <li class="active">View</li>
+</ul>
+
+   <div class="row">
+       <div class="col-md-12">
+            <p>
+              <a href="<?php echo $this->sitePath."transaction/invoice"; ?>" class="btn btn-default border-none">Invoice</a><a href="<?php echo $this->sitePath."transaction/credit"; ?>" class="btn btn-danger border-none">Credit Note</a>
+            </p>
+       </div>
+   </div>
+
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            </div>
+   </div>
+   <?php
+    $productTitle = 'Product';
+    if(isset($this->invoiceCustom[0]['default_product_title']) && $this->invoiceCustom[0]['default_product_title']==1) {
+         $productTitle = 'Product';
+    } else if(isset($this->invoiceCustom[0]['default_product_title']) && $this->invoiceCustom[0]['default_product_title']==2) {
+         $productTitle = 'Service';
+    } else if(isset($this->invoiceCustom[0]['default_product_title']) && $this->invoiceCustom[0]['default_product_title']==3) {
+         $productTitle = 'Product / Service';
+    }
+   ?>
+<!-- <div class="row">
+<div class="col-md-12">
+                            <div class="square-widget">
+                                <div class="widget-head clearfix">
+                                    <h4 class="pull-left"><i class="icon-user-4"></i> Credit Transaction Details</h4>
+                                </div>
+                                <div class="widget-container" style="margin-left:50px;">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>Credit No </strong> <br/>
+                                        <span><?php echo $this->credit[0]['credit_no']; ?></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Date </strong> <br/>
+                                        <span><?php echo date("d-m-Y",strtotime($this->credit[0]['date'])); ?></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Customer / Payee </strong> <br/>
+                                        <span><?php echo $this->credit[0]['customer_name']; ?></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Invoice No </strong> <br/>
+                                        <span><?php echo $this->credit[0]['invoice_no']; ?></span>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>Transaction Currency </strong><br>
+                                        <span>
+                                        <?php 
+                                          if(isset($this->currencies) && !empty($this->currencies)) {
+                                            foreach ($this->currencies as $key => $currency) {
+                                              if($key==$this->credit[0]['transaction_currency']) {
+                                                  echo $currency." - ".$key;
+                                                }
+                                            }
+                                          }
+                                        ?>
+                                        </span>
+                                        
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <strong>Memo  </strong><br/>
+                                        <span><?php echo $this->credit[0]['memo']; ?></span> 
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <strong>Approval By / For </strong><br>
+                                        <span>
+                                        <?php 
+                                            if(isset($this->approveUser) && !empty($this->approveUser)) {
+                                                foreach ($this->approveUser as $approve) {
+                                                 if($approve['account_type']==0) {
+                                                        $account_type = "Developer";
+                                                  } 
+                                                  else if($approve['account_type']==1) {
+                                                        $account_type = "Developer";
+                                                  } 
+                                                  else if($approve['account_type']==2) {
+                                                        $account_type = "Super User";
+                                                  } else if($approve['account_type']==3) {
+                                                        $account_type = "Manager";
+                                                  }
+                                                  if($approve['id']==$this->credit[0]['approval_for']) {
+                                                        echo $approve['username']." - ".$account_type;
+                                                  }
+                                                }
+                                            }
+                                        ?>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Status </strong><br>
+                                        <span>
+                                        <?php 
+                                            if($this->credit[0]['credit_status']==1) {
+                                                echo "Approved / Verified";
+                                            } else if($this->credit[0]['credit_status']==2) {
+                                                echo "Saved / Unverified";
+                                            } else if($this->credit[0]['credit_status']==3) {
+                                                echo "Draft";
+                                            }
+                                        ?>
+                                        </span>
+                                    </div>
+                                   
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<div class="row">
+                         <div class="col-md-12">
+                            <div class="square-widget">
+                                <h5 class="pull-left"><i class="icon-user-4"></i> Product Details</h5>
+                                <div class="widget-container">
+                                    <table class="table responsive">
+                                        <thead>
+                                            <tr>
+                                            <th style="width:2%;"></th>
+                                                <th>
+                                                    <?php echo $productTitle; ?> ID
+                                                </th>
+                                                <th>
+                                                    <?php echo $productTitle; ?> Description
+                                                </th>
+                                                <th>
+                                                    Quantity
+                                                </th>
+                                                <th>
+                                                    Unit Price
+                                                </th>
+                                                <th>
+                                                    Tax Code
+                                                </th>
+                                                <th>
+                                                    Amount
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="credit_detail">
+                                        <?php
+                                            $j=1;
+                                            $total_gst = 0.00;
+                                            $sub_total = 0.00;
+                                            foreach ($this->creditProductList  as $creditProduct) {
+                                                $net_amount = $creditProduct['quantity'] * $creditProduct['unit_price'];
+                                                $total_gst += $net_amount * $creditProduct['tax_value'] / 100;
+                                                $sub_total += $net_amount;
+                                        ?>
+                                            <tr>
+                                                <td style="width:2%;"></td>
+                                                <td style="width:15%;">
+                                                    <?php echo $creditProduct['product_id']; ?>
+                                                </td>
+                                                <td style="width:20%;">
+                                                        <?php
+                                                            foreach ($this->product as $product) {
+                                                                if($creditProduct['product_description']==$product['id']) {
+                                                                    echo ucfirst($product['name']);
+                                                                }
+                                                            }
+                                                        ?>
+                                                        
+                                                </td>
+                                                <td style="width:5%;">
+                                                    <?php echo $creditProduct['quantity']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo number_format($creditProduct['unit_price'],2,'.',','); ?>
+                                                </td>
+                                                <td style="width:15%;">
+                                                    <?php
+                                                        if(isset($this->taxCode) && !empty($this->taxCode)) {
+                                                            foreach ($this->taxCode as $tax) {
+                                                                if($creditProduct['fktax_id']==$tax['id']) {
+                                                                foreach ($this->supply as $key => $supply) {
+                                                                    if($tax['tax_code']==$key) {
+                                                                      $code = $supply['name'];
+                                                                    }
+                                                                } 
+                                                                  echo $code." - ".$tax['tax_percentage']." %"; 
+                                                                }
+                                                            }
+                                                        }
+                                                    ?>                                                  
+                                                </td>
+                                                <td>
+                                                    <strong id="net_amount_<?php echo $j; ?>"><?php echo number_format($net_amount,2,'.',','); ?></strong>
+                                                </td>
+                                            </tr>
+                                            <?php 
+                                                    $j++;
+                                                }
+                                            ?>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-4 col-md-offset-9">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Sub Total : </label>
+                                    <span id="sub_total"><?php echo number_format($sub_total,2,'.',','); ?></span> <br/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-md-offset-9">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Total GST : </label>
+                                    <span id="total_gst"><?php echo number_format($total_gst,2,'.',','); ?></span>
+                             </div>
+                        </div>
+
+                            <div class="row">
+                            <div class="col-md-4 col-md-offset-9">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Grand Total : </label>
+                                    <span id="grand_total"><?php 
+                                    $over_all = $sub_total+$total_gst;
+                                   echo number_format($over_all,2,'.',','); ?></span>
+                                </div>
+                             </div>
+                            <div class="row">
+                            <div class="col-md-4 col-md-offset-9">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Grand Total SGD :</label>
+                                    <span id="grand_total_sgd"></span>
+                                </div>
+                             </div>
+
+                            </div> -->
+  <div class="container">
+                <div class="row">                 
+                  <!-- <div class="btn-toolbar profile-toolbar pull-right">
+                      <div class="btn-group">
+                         <button class="btn">Pay Now </button>
+                        <button class="print btn" rel="invoice_template">Print </button>
+                      </div>
+                  </div> -->
+                </div>
+                <div id="invoice_template">
+
+              <?php 
+                if($this->invoiceCustom[0]['template']==1) {
+              ?>
+                 <div class="row">
+                        <div class="col-md-7">
+                            <h4>INVOICE</h4>
+                            <img src="<?php echo $this->sitePath.$this->filepath."/".$this->invoiceCustom[0]['company_logo']; ?>" alt="<?php echo $this->company[0]['company_name']." Logo"; ?>" title="<?php echo $this->company[0]['company_name']." Logo"; ?>" style="margin-top:30px;">
+                        </div>
+                        <div class="col-md-3">
+                            <!-- <div class="btn-toolbar profile-toolbar pull-right">
+                                <div class="btn-group">
+                                    <button class="btn">Pay Now </button>
+                                    <button class="btn">Print </button>
+                                </div>
+                            </div> -->
+                            <h4>From</h4>
+                            <address>
+                                <strong><?php echo $this->company[0]['company_name']."."; ?></strong><br>
+                                <?php echo $this->company[0]['block_no']." ". $this->company[0]['street_name']." ". $this->company[0]['city']; ?><br>
+                                <?php echo $this->country[$this->company[0]['country']]; ?><br>
+                                <abbr title="Phone">P:</abbr> <?php echo $this->company[0]['telephone']; ?> </address>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <ul class="invoice-info">
+                                <li><label>Credit No</label> <?php echo $this->credit[0]['credit_no']; ?></li> 
+                                <li><label>Reference Invoice ID</label> <?php echo $this->credit[0]['invoice_no']; ?></li>
+                                <li><label>Issue Date</label> <?php echo date("d-m-Y",strtotime($this->credit[0]['date'])); ?></li>
+                                <li><label>Currency</label> <?php 
+                                          if(isset($this->currencies) && !empty($this->currencies)) {
+                                            foreach ($this->currencies as $key => $currency) {
+                                              if($key==$this->credit[0]['transaction_currency']) {
+                                                  echo $currency." - ".$key;
+                                                }
+                                            }
+                                          }
+                                        ?></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h4>Invoice To</h4>
+                            <address>
+                                <strong><?php echo $this->credit[0]['customer_name']."."; ?></strong><br>
+                                
+                                <?php echo $this->credit[0]['address1'].", ".$this->credit[0]['city']; ?><br>
+                                <?php echo $this->credit[0]['state'].", ".$this->country[$this->credit[0]['country']]."-".$this->credit[0]['postcode']; ?><br>
+                                <abbr title="Phone">P:</abbr> <?php echo $this->credit[0]['office_number']; ?>
+                            </address>
+                        </div>
+                    </div>
+                    <?php
+                      } else if($this->invoiceCustom[0]['template']==2) {
+                    ?>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img src="<?php echo $this->sitePath.$this->filepath."/".$this->invoiceCustom[0]['company_logo']; ?>" alt="<?php echo $this->company[0]['company_name']." Logo"; ?>" title="<?php echo $this->company[0]['company_name']." Logo"; ?>">
+                            <h4>From</h4>
+                            <address>
+                                <strong><?php echo $this->company[0]['company_name']."."; ?></strong><br>
+                                <?php echo $this->company[0]['block_no']." ". $this->company[0]['street_name']." ". $this->company[0]['city']; ?><br>
+                                <?php echo $this->country[$this->company[0]['country']]; ?><br>
+                                <abbr title="Phone">P:</abbr> <?php echo $this->company[0]['telephone']; ?> </address>
+                        </div>
+
+                         <div class="col-md-3">
+                         <br/><br/>
+                            <h4>Invoice To</h4>
+                            <address>
+                                <strong><?php echo $this->credit[0]['customer_name']."."; ?></strong><br>
+                                
+                                <?php echo $this->credit[0]['address1'].", ".$this->credit[0]['city']; ?><br>
+                                <?php echo $this->credit[0]['state'].", ".$this->country[$this->credit[0]['country']]."-".$this->credit[0]['postcode']; ?><br>
+                                <abbr title="Phone">P:</abbr> <?php echo $this->credit[0]['office_number']; ?>
+                            </address>
+                        </div>
+
+                        <div class="col-md-4">
+                             <h4>INVOICE</h4> <br/>
+                            <ul class="invoice-info">
+                                 <li><label>Credit No</label> <?php echo $this->credit[0]['credit_no']; ?></li> 
+                                <li><label>Reference Invoice ID</label> <?php echo $this->credit[0]['invoice_no']; ?></li>
+                                <li><label>Issue Date</label> <?php echo date("d-m-Y",strtotime($this->credit[0]['date'])); ?></li>
+                                <li><label>Currency</label> <?php 
+                                          if(isset($this->currencies) && !empty($this->currencies)) {
+                                            foreach ($this->currencies as $key => $currency) {
+                                              if($key==$this->credit[0]['transaction_currency']) {
+                                                  echo $currency." - ".$key;
+                                                }
+                                            }
+                                          }
+                                        ?></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                       
+                    </div>
+                    <?php
+                      } else if($this->invoiceCustom[0]['template']==3) {
+                    ?>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="<?php echo $this->sitePath.$this->filepath."/".$this->invoiceCustom[0]['company_logo']; ?>" alt="<?php echo $this->company[0]['company_name']." Logo"; ?>" title="<?php echo $this->company[0]['company_name']." Logo"; ?>">
+                        </div>
+                        <div class="col-md-5">
+                            
+                        </div>
+                        <div class="col-md-3">
+                            <h4>INVOICE</h4>
+                            <h4>From</h4>
+                            <address>
+                                <strong><?php echo $this->company[0]['company_name']."."; ?></strong><br>
+                                <?php echo $this->company[0]['block_no']." ". $this->company[0]['street_name']." ". $this->company[0]['city']; ?><br>
+                                <?php echo $this->country[$this->company[0]['country']]; ?><br>
+                                <abbr title="Phone">P:</abbr> <?php echo $this->company[0]['telephone']; ?> </address>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <ul class="invoice-info">
+                                 <li><label>Credit No</label> <?php echo $this->credit[0]['credit_no']; ?></li> 
+                                <li><label>Reference Invoice ID</label> <?php echo $this->credit[0]['invoice_no']; ?></li>
+                                <li><label>Issue Date</label> <?php echo date("d-m-Y",strtotime($this->credit[0]['date'])); ?></li>
+                                <li><label>Currency</label> <?php 
+                                          if(isset($this->currencies) && !empty($this->currencies)) {
+                                            foreach ($this->currencies as $key => $currency) {
+                                              if($key==$this->credit[0]['transaction_currency']) {
+                                                  echo $currency." - ".$key;
+                                                }
+                                            }
+                                          }
+                                        ?></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h4>Invoice To</h4>
+                            <address>
+                                <strong><?php echo $this->credit[0]['customer_name']."."; ?></strong><br>
+                                
+                                <?php echo $this->credit[0]['address1'].", ".$this->credit[0]['city']; ?><br>
+                                <?php echo $this->credit[0]['state'].", ".$this->country[$this->credit[0]['country']]."-".$this->credit[0]['postcode']; ?><br>
+                                <abbr title="Phone">P:</abbr> <?php echo $this->credit[0]['office_number']; ?>
+                            </address>
+                        </div>
+                    </div>
+                    <?php
+                      }
+                    ?>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <table class="table responsive">
+                             <!--<table class="table table-striped table-well block-head responsive">-->
+                                <thead>
+                                   <!-- <tr>
+                                    	 <th colspan="8">Invoice Row</th>
+                                    </tr>-->
+                                    <tr>
+                                        <th class="invoice-id">
+                                            <?php echo $productTitle; ?> ID
+                                        </th>
+                                        <th class="invoice-type">
+                                            <?php echo $productTitle; ?> Description
+                                        </th>
+                                        <th class="invoice-qty">
+                                            Quantity
+                                        </th>
+                                        <th class="invoice-unit">
+                                            Unit Price
+                                        </th>
+                                        <th class="invoice-amount">
+                                            Discount
+                                        </th>
+                                        <th class="invoice-type">
+                                            Tax Code
+                                        </th>
+                                        <th class="invoice-unit">
+                                            GST
+                                        </th>
+                                        <th class="invoice-amount">
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                     <?php
+                                            $j=1;
+                                            $total_gst = 0.00;
+                                            $sub_total = 0.00;
+                                            foreach ($this->creditProductList  as $creditProduct) {
+                                              if($creditProduct['row_type']==1) {
+                                                $net_amount = $creditProduct['quantity'] * $creditProduct['unit_price'] - $creditProduct['discount_amount'];
+                                                $total_gst += $creditProduct['gst_amount'];
+                                                $sub_total += $net_amount;
+                                        ?>         
+                                    <tr>
+                                        <td class="invoice-type" style="border:none">
+                                            <?php echo $creditProduct['product_id']; ?>
+                                        </td>
+                                        <td class="invoice-type" style="border:none">
+                                            <?php
+                                               foreach ($this->product as $product) {
+                                                 if($creditProduct['product_description']==$product['id']) {
+                                                     echo ucfirst($product['name']);
+                                                  }
+                                                }
+                                             ?>
+                                        </td>
+                                        <td class="invoice-qty" style="border:none">
+                                            <?php echo $creditProduct['quantity']; ?>
+                                        </td>
+                                        <td class="invoice-unit" style="border:none">
+                                            <?php echo number_format($creditProduct['unit_price'],2,'.',','); ?>
+                                        </td>
+                                        <td class="invoice-unit" style="border:none">
+                                            <?php echo number_format($creditProduct['discount_amount'],2,'.',','); ?>
+                                        </td>
+                                        <td class="invoice-type" style="border:none">
+                                            <?php
+                                                        if(isset($this->taxCode) && !empty($this->taxCode) && $this->taxCode!=0 && $creditProduct['fktax_id']!=0) {
+                                                            foreach ($this->taxCode as $tax) {
+                                                                if($creditProduct['fktax_id']==$tax['id']) {
+                                                                  foreach ($this->supply as $key => $supply) {
+                                                                      if($tax['tax_code']==$key) {
+                                                                        echo $supply['name']." - ".$tax['tax_percentage']." %";
+                                                                      }
+                                                                  }
+                                                                }
+                                                            }
+                                                        } else {
+                                                         echo "NA - Not Applicable";
+                                                        }
+                                                    ?>  
+                                        </td>
+                                        <td class="invoice-unit" style="border:none">
+                                            <?php echo number_format($creditProduct['gst_amount'],2,'.',','); ?>
+                                        </td>
+                                        <td class="invoice-amount" style="border:none">
+                                            <span id="net_amount_<?php echo $j; ?>"><?php echo number_format($net_amount,2,'.',','); ?></span>
+                                        </td>
+                                    </tr>
+                                    <?php 
+                                        $j++;
+                                      }
+                                      }
+                                    ?>
+
+
+                                  <tr>
+                                     <th colspan="8" style="border:none">&nbsp;&nbsp;&nbsp;</th>
+                                   </tr>
+                                   <tr>
+                                     <th colspan="8" style="border:none">Less Expenses:</th>
+                                   </tr>
+                                   <!--<tr>
+                                        <th class="invoice-id">
+                                            Expense Type
+                                        </th>
+                                        <th class="invoice-id">
+                                            Product ID
+                                        </th>
+                                        <th class="invoice-type">
+                                            Product Description
+                                        </th>
+                                        <th class="invoice-qty">
+                                            Quantity
+                                        </th>
+                                        <th class="invoice-unit">
+                                            Unit Price
+                                        </th>
+                                        <th class="invoice-type">
+                                            Tax Code
+                                        </th>
+                                        <th class="invoice-unit">
+                                            GST
+                                        </th>
+                                        <th class="invoice-amount">
+                                            Amount
+                                        </th>
+                                    </tr> -->
+
+
+
+                                      <?php
+                                            $i=1;
+                                            $esub_gst   = 0.00;
+                                            $esub_total = 0.00;
+                                            foreach ($this->creditProductList  as $invoiceProduct) {
+                                              if($invoiceProduct['row_type']==2) {
+                                                $enet_amount = $invoiceProduct['quantity'] * $invoiceProduct['unit_price'];
+                                                $esub_gst   += $invoiceProduct['gst_amount'];
+                                                $esub_total += $enet_amount;
+                                      ?>          
+                                    <tr>
+                                        <td class="invoice-type" style="border:none">
+                                            <?php /*
+                                               foreach ($this->expenseAccount as $expense) {
+                                                 if($invoiceProduct['fkexpense_type']==$expense['id']) {
+                                                     echo ucfirst($expense['account_name']);
+                                                  }
+                                                } */ echo $invoiceProduct['product_id']; 
+                                             ?>
+                                        </td>
+                                        <td class="invoice-type" style="border:none">
+                                            <?php echo $invoiceProduct['product_description']; ?>
+                                        </td>
+                                        <td class="invoice-type" style="border:none; text-align:center;">
+                                            <?php
+                                              echo $invoiceProduct['quantity'];
+                                             ?>
+                                        </td>
+                                        <td class="invoice-unit" style="border:none">
+                                            <?php echo number_format($invoiceProduct['unit_price'],2,'.',','); ?>
+                                        </td>
+                                        <td class="invoice-unit" style="border:none">
+                                            <?php //echo number_format($invoiceProduct['unit_price'],2,'.',','); ?>
+                                        </td>
+                                        <td class="invoice-type" style="border:none">
+                                            <?php
+                                                        if(isset($this->taxCode2) && !empty($this->taxCode2) && $invoiceProduct['fktax_id']!=0) {
+                                                            foreach ($this->taxCode2 as $tax) {
+                                                                if($invoiceProduct['fktax_id']==$tax['id']) {
+                                                                  foreach ($this->purchase as $key => $purchase) {
+                                                                      if($tax['tax_code']==$key) {
+                                                                        echo $purchase['name']." - ".$tax['tax_percentage']." %";
+                                                                      }
+                                                                  }
+                                                                }
+                                                            }
+                                                        } else {
+                                                         echo "NA - Not Applicable";
+                                                        }
+                                                    ?>  
+                                        </td>
+                                        <td class="invoice-unit" style="border:none">
+                                            <?php echo number_format($invoiceProduct['gst_amount'],2,'.',','); ?>
+                                        </td>
+                                        <td class="invoice-amount" style="border:none">
+                                            <span id="enet_amount_<?php echo $i; ?>"><?php echo number_format($enet_amount,2,'.',','); ?></span>
+                                        </td>
+                                    </tr>
+                                    <?php 
+                                        $i++;
+                                          }
+                                      }
+                                    ?>
+
+
+                                    <?php
+                                      $sub_total  = $sub_total-$esub_total;
+                                      $total_gst  = $total_gst-$esub_gst;
+                                    ?>
+
+
+
+
+                                    <tr class="invoice-cal">
+                                        <td colspan="7">
+                                            <span><strong>Sub Total</strong></span>
+                                            <span><strong>Total GST</strong></span>
+                                            <span><strong>Grand Total</strong></span>
+                                            <span><strong>Exchange Rate</strong></span>
+                                            <span><strong>Grand Total SGD</strong></span><!-- <span class="amount-due">Amount Due</span> -->
+                                        </td>
+                                        <td>
+                                            <span><strong id="sub_total"><?php echo number_format($sub_total,2,'.',','); ?></strong></span>
+                                            <span><strong id="total_gst"><?php echo number_format($total_gst,2,'.',','); ?></strong></span>
+                                            <span><strong id="grand_total"><?php 
+                                             $over_all = $sub_total+$total_gst; 
+                                                  echo number_format($over_all,2,'.',',');
+                                             ?></strong></span>
+                                             <span><strong><?php echo $this->credit[0]['exchange_rate']; ?></strong></span>
+                                             <span><strong id="grand_total_sgd">
+                                                  <?php 
+                                                  $calculate_all = $this->credit[0]['exchange_rate']*$over_all;
+                                                  echo number_format($calculate_all,2,'.',','); 
+                                                  if($this->credit[0]['transaction_currency']!='SGD') {
+                                                    $totAmoumt = $calculate_all;
+                                                  } else {
+                                                    $totAmoumt = $over_all;
+                                                  }
+                                              ?>
+                                             </strong></span><!-- <span class="amount-due">$180</span> -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                    </div>
+
+                   
+                    <div class="row">
+                        <div class="col-md-12">
+                        <!-- <h6>Notes:</h6>
+                            <p>
+                                Aenean tincidunt, sapien ut gravida viverra, turpis justo facilisis metus, et iaculis purus nibh vel sem. Maecenas ante diam, molestie vitae ultricies quis, sodales nec leo. Duis id arcu vel mi luctus sodales vel at dui. Aliquam dapibus rutrum nisl. Curabitur mattis, lectus ac volutpat pellentesque, ante nisi pharetra ipsum, ut tempus diam massa in nisl.
+                            </p> -->
+                        </div>
+                    </div>
+                    </div>
+                  </div>
+
+<script type="text/javascript">
+
+/*$(function() {
+    gp_convertIt_Onload('<?php echo $over_all; ?>');
+ });
+*/
+/*function gp_convertIt_Onload(amount) {
+  if (amount=='' || amount==0){
+    return false;
+  } else {
+  var gp_from = '<?php echo $this->credit[0]['transaction_currency']; ?>';
+    if(gp_from!='SGD') {
+      var gp_to   = 'SGD';
+      var gp_amount = amount;
+      $.getJSON( "http://www.geoplugin.net/currency_converter.gp?jsoncallback=?", { from:gp_from, to:gp_to, amount:gp_amount }, 
+        function(output){
+          $("#grand_total_sgd").html(output.to.symbol+output.to.amount);
+        });
+    }
+  }
+}*/
+
+function gp_convertIt_Onload(amount) {
+  if (amount=='' || amount==0){
+    return false;
+  } else {
+  var gp_from = '<?php echo $this->credit[0]['transaction_currency']; ?>';
+    if(gp_from!='SGD') {
+      var gp_to   = 'SGD';
+      var gp_amount = amount;
+      $.ajax({
+        type: "POST",
+        url: "<?php echo $this->sitePath.'default/index/convert-currency'; ?>",
+        data: 'action=converter&amount='+gp_amount+'&from='+gp_from,
+        success: function (html) {
+          var convert_amount = numberWithCommas(Number(html),'normal');
+          $("#grand_total_sgd").html("$ "+convert_amount);
+        }
+      });
+    }
+  }
+}
+
+
+ function numberWithCommas(x,action) {
+  if(action=='normal') {
+    var value = x.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+    return value;
+  } else if(action=='format')  {
+    var value  = x.replace(/\,/g,''); 
+    return value;
+  }
+}
+</script>

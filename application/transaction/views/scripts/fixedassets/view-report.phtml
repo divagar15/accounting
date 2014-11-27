@@ -1,0 +1,520 @@
+<style>
+	body{
+		margin:0px;
+		padding:0px;
+	}
+	.wrapper{
+		width:1000px;
+		margin:0 auto;
+	}
+	table{
+		width:100%;
+		border:1px solid #000;
+		text-align:center;
+		border-collapse:collapse;
+	}
+	table table{
+		border:none;
+	}
+	thead{
+		background:#d8d8d8;
+	}
+	th{
+		border-right:1px solid #000;
+		border-bottom:1px solid #000;
+	}
+	th table tr:first-child th{
+		border-bottom:1px solid #000;
+		border-right:none;
+	}
+	.leftborder td{
+		border-left:1px solid #000;
+	}
+	.leftborder td:first-child{
+		border-left:none;
+	}
+	.twoborder td{
+		border-left:1px solid #000;
+		border-bottom:1px solid #000;
+	}
+	.twoborder td:first-child{
+		border-left:none;
+	}
+	tbody tr td{
+		border-left:1px solid #000;
+		border-bottom:1px solid #000;
+		white-space:nowrap;
+	}	
+	tbody tr td table tr td:first-child{
+		border-left:none;
+	}
+	table tbody tr td table tr td, table table tbody tr td{
+		border-bottom:none;
+	}
+	tbody tr td:first-child{
+		text-align:left;
+		padding-right:10px;
+	}
+	table table tbody tr td:first-child{
+		text-align:center;
+		padding-right:0px;
+	}
+	table#main-table td, table#main-table th {
+    	padding: 1px !important;
+    	text-align: left;
+	}
+	#sub-table tbody tr td {
+		border-left: 0px !important;
+	}
+	tbody tr.total-table td {
+		border-left: 0px !important;
+	}
+</style>
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li><a href="<?php echo $this->sitePath."transaction/fixedassets/"; ?>">Fixed Assets</a></li>
+   <li><a href="<?php echo $this->sitePath."transaction/fixedassets/report"; ?>">Reports</a></li>
+   <li class="active">View</li>
+</ul>
+<?php 
+   $logSession = new Zend_Session_Namespace('sess_login');
+   ?>
+<div class="row">
+   <div class="col-md-12">
+      <form class="form-horizontal" id="filter-by" method="get" novalidate="novalidate">
+         <div class="form-group">
+            <label class="col-lg-5 control-label">From </label>
+            <div class="col-lg-3">
+               <input type="text" value="<?php echo $this->fromDate; ?>"  disabled class="form-control"/>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-lg-5 control-label">To</label>
+            <div class="col-lg-3">
+               <input type="text" value="<?php echo $this->toDate; ?>"  disabled class="form-control"/>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-lg-5 control-label">Branch </label>
+            <div class="col-lg-3">
+               <input type="text" value="<?php echo ($this->branchName)?$this->branchName:'All'; ?>"  disabled class="form-control"/>
+            </div>
+         </div>
+      </form>
+      <div class="row">
+      <div class="col-md-2 pull-right" style="padding-bottom: 17px;">
+          <button class="print btn btn-inverse" type="button" rel="reports-content"><i class="icon-print"></i> Print</button>
+          <button class="btn btn-inverse" type="button"  onclick="tableToExcel('reports-content', 'Account Receivables')"><i class="icon-file-excel"></i> Excel</button>
+      </div>
+    </div>
+   </div>
+</div>
+<div class="row">
+   <div class="col-md-12">
+      <div class="box-widget" id="reports-content">
+         <table width="100%" id="main-table" style="overflow:auto">
+        	<thead>
+            	<tr>
+                	<th style="text-align:center"><?php echo $this->coaName;?></th>
+                    <th style="text-align:center">Description</th>
+                    <th style="text-align:center">Branch</th>
+                    <th style="text-align:center">Date of Purchase</th>
+                    <th style="text-align:center">Date of Disposal</th>
+                    <th>
+                    	<table>
+                        	<tr>
+                            	<th colspan="3" style="text-align:center">As on <?php echo $this->prevDate; ?></th>
+                            </tr>                            
+                            <tr class="leftborder" height="45">
+                                <td width="80" style="text-align:center;">Book value</td>
+                                <td width="80" style="text-align:center">Acc Depn </td>
+                                <td width="80" style="text-align:center">&nbsp; NBV &nbsp; </td>
+                            </tr>
+                             
+                        </table>
+                    </th>
+                    <th>
+                    	<table>
+                        	<tr>
+                            	<th colspan="4" style="text-align:center"><?php echo $this->fromDate;?> to <?php echo $this->toDate; ?></th>
+                            </tr>
+                            <tr class="twoborder">
+                                <td colspan="2" style="text-align:center">Book value</td>
+                                <td colspan="2" style="text-align:center">Depreciation</td>
+                            </tr>
+                            <tr class="leftborder">
+                            	<td width="80" style="text-align:center">Additions</td>
+                                <td width="80" style="text-align:center">Disposals</td>
+                                <td width="80" style="text-align:center">Additions</td>
+                                <td width="80" style="text-align:center">Disposals</td>
+                            </tr>
+                        </table>
+                    </th>
+                    <th>
+                    	<table>
+                        	<tr>
+                            	<th colspan="3" style="text-align:center">As at <?php echo $this->toDate; ?></th>
+                            </tr>
+                            <tr class="leftborder" height="45">
+                                <td width="84" style="text-align:center">Book value</td>
+                                <td width="84" style="text-align:center">Acc Depn</td>
+                                <td width="84" style="text-align:center">NBV</td>
+                            </tr>
+                        </table>
+                    </th>
+                    <th style="text-align:center">Profit/(Loss On Disposal)</th>
+                </tr>
+            </thead>            
+            <tbody>
+               <?php if(!empty($this->allReports)) { $i = 0; 
+			   		foreach($this->allReports as $allReport) { $tr_class= ($i % 2 == 0)?'':'#dbe5f1'; ?>
+                    <tr bgcolor="<?php echo $tr_class;?>">
+                        <td style="text-align:center"><?php echo $allReport['fa_no']; ?></td>
+                        <td style="text-align:center"><?php echo $allReport['fa_description']; ?></td>
+                        <td style="text-align:center"><?php echo $allReport['branch_name']; ?></td>
+                        <td style="text-align:center"><?php echo $allReport['date']; ?></td>
+                        <td style="text-align:center"><?php echo ($allReport['disposal_date'])? $allReport['disposal_date']:'---'; ?></td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td id="before_book_<?php echo $i;?>" width="80" style="text-align:center">
+											<?php 
+												if(!empty($allReport['purchase_price_before']) && $allReport['purchase_price_before'] !='0.00') {  
+                                                    $bp = $allReport['purchase_price_before'];
+													echo ($allReport['purchase_price_before'])?(number_format($allReport['purchase_price_before'],2,'.',',')):'--'; 
+												} else {
+													echo "--";
+                                                    $bp = '';
+												}
+											?>
+                                    </td>
+                                    <td id="before_depn_<?php echo $i;?>" width="80" style="text-align:center">
+											<?php 
+												if(!empty($allReport['disposal_amount_before']) && $allReport['disposal_amount_before'] !='0.00') { 
+                                                    $bd=  $allReport['disposal_amount_before'];
+													echo ($allReport['disposal_amount_before'])?(number_format($allReport['disposal_amount_before'],2,'.',',')):'--'; 
+												} else {
+													echo "--";
+                                                    $bd ='';
+												}
+											?>											
+                                    <td id="before_nbv_<?php echo $i;?>" width="80" style="text-align:center">
+                                        <?php 
+											if(!empty($allReport['purchase_price_before']) && !empty($allReport['disposal_amount_before'])) {
+                                            	$nbv_before = ($allReport['purchase_price_before'] - $allReport['disposal_amount_before']);
+                                            	echo ($nbv_before)?(number_format($nbv_before,2,'.',',')) :'--';
+											} else {
+												echo "--";
+											}
+                                        ?>
+                                     </td>
+                                </tr>
+                            </table>
+                        </td>
+                         <td>
+                            <table>
+                                <tr>
+                                    <td id="between_book_add_<?php echo $i;?>" width="80" style="text-align:center">
+                                    	<?php 
+											if(!empty($allReport['purchase_price_between']) && $allReport['purchase_price_between'] !='0.00') {  
+                                                $bp1 = $allReport['purchase_price_between'];
+												echo ($allReport['purchase_price_between'])?(number_format($allReport['purchase_price_between'],2,'.',',')):'--'; 
+											} else {
+												echo "--";
+                                                $bp1 ='';
+											}
+										?>	
+                                    </td>
+                                    <td id="between_book_disposal_<?php echo $i;?>" width="80" style="text-align:center">
+                                    	<?php 
+											if(!empty($allReport['disposal_amount_between']) && $allReport['disposal_amount_between'] !='0.00') {  
+                                                $bd1 = $allReport['disposal_amount_between'];
+												echo ($allReport['disposal_amount_between'])?(number_format($allReport['disposal_amount_between'],2,'.',',')):'--'; 
+											} else {
+												echo "--";
+                                                $bd1 = '';
+											}
+										?>	
+                                    </td>
+                                    <td id="between_book_add_depre<?php echo $i;?>" width="80" style="text-align:center">
+                                    	<?php 
+
+											if(!empty($allReport['purchase_price_between_depreciation']) && $allReport['purchase_price_between_depreciation'] !='0.00') {  
+                                                $bp2 = $allReport['purchase_price_between_depreciation'];
+												echo ($allReport['purchase_price_between_depreciation'])?(number_format($allReport['purchase_price_between_depreciation'],2,'.',',')):'--'; 
+											} else {
+												echo "--";
+                                                $bp2 = '';
+											}
+										?>	
+                                    </td>
+                                    <td id="between_book_disposal_depr_<?php echo $i;?>" width="80" style="text-align:center">
+                                    	<?php 
+											if(!empty($allReport['disposal_amount_depreciation']) && $allReport['disposal_amount_depreciation'] !='0.00') {  
+                                                $bd2 = $allReport['disposal_amount_depreciation'];
+												echo ($allReport['disposal_amount_depreciation'])?(number_format($allReport['disposal_amount_depreciation'],2,'.',',')):'--'; 
+											} else {
+												echo "--";
+                                                $bd2 ='';
+											}
+										?>	
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td id="after_book_<?php echo $i;?>" width="84" style="text-align:center">
+                                    	<?php  echo $total1= $bp + $bp1 - $bd1; 
+											/*if(!empty($allReport['purchase_price_after']) && $allReport['purchase_price_after'] !='0.00') {  
+												echo ($allReport['purchase_price_after'])?(number_format($allReport['purchase_price_after'],2,'.',',')):'--'; 
+											} else {
+												echo "--";
+											} */
+										?>	
+                                    </td>
+                                    <td id="after_depn_<?php echo $i;?>" width="84" style="text-align:center">
+                                    	 <?php 
+                                               echo $total2 = $bd + $bp2 - $bd2;
+											/*if(!empty($allReport['disposal_amount_after']) && $allReport['disposal_amount_after'] !='0.00') {  
+												echo ($allReport['disposal_amount_after'])?(number_format($allReport['disposal_amount_after'],2,'.',',')):'--'; 
+											} else {
+												echo "--";
+											} */
+										?>	
+                                    </td>
+                                    <td id="after_nbv_<?php echo $i;?>" width="84" style="text-align:center">
+                                    	<?php echo $total1 - $total2;
+											/*if(!empty($allReport['purchase_price_after']) && !empty($allReport['disposal_amount_after'])) {
+                                            	$nbv_after = ($allReport['purchase_price_after'] - $allReport['disposal_amount_after']);
+                                            	echo ($nbv_after)?(number_format($nbv_after,2,'.',',')) :'--';
+											} else {
+												echo "--";
+											} */
+                                        ?>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>   
+                        <td style="text-align:center">
+                                <?php
+                                        if(!empty($allReport['pl_amount']) && $allReport['pl_amount'] != '0.00') {
+                                            echo $allReport['pl_amount'];
+                                        } else {
+                                            echo "N/A";
+                                        }
+                                 ?>
+                        </td>                 
+                    </tr>
+              <?php $i++;} ?>
+              		 <tr class="total-table">
+                            <td style="text-align:center"></td>
+                            <td style="text-align:center"></td>
+                            <td style="text-align:center"></td>
+                            <td style="text-align:center"></td>
+                            <td style="text-align:center">Total</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td width="21" style="text-align:center"><span id="total_before_book"></span></td>
+                                        <td width="18" style="text-align:center"><span id="total_before_depn"></span></td>			
+                                        <td width="12" style="text-align:center"><span id="total_before_nbv"></span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                             <td>
+                                <table>
+                                    <tr>
+                                        <td width="80" style="text-align:center"><span id="total_between_book_add"></span></td>
+                                        <td width="80" style="text-align:center"><span id="total_between_book_disposal"></span></td>
+                                        <td width="80" style="text-align:center"><span id="total_between_depr_add"></span></td>
+                                        <td width="80" style="text-align:center"><span id="total_between_depr_disposal"></span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td width="21" style="text-align:center"><span id="total_after_book"></span></td>
+                                        <td width="18" style="text-align:center"><span id="total_after_depn"></span></td>
+                                        <td width="12" style="text-align:center"><span id="total_after_nbv"></span></td>
+                                    </tr>
+                                </table>
+                            </td>   
+                            <td style="text-align:center"></td>                 
+                        </tr>
+               <?php
+			   } else {?>
+               			<tr colspan="16">
+                        	<td style="text-align:center">No Record Found</td>
+                        </tr>
+               <?php } ?>
+            </tbody>
+        </table>       
+        <input id="totalCount" value="<?php echo count($this->allReports); ?>" type="hidden" />
+      </div>
+   </div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var totalCount = $('#totalCount').val();
+		var sum1 = 0;
+		var sum2 = 0;
+		var sum3 = 0;
+		var sum4 = 0;
+		var sum5 = 0;
+		var sum6 = 0;
+		var sum7 = 0;
+		var sum8 = 0;
+		var sum9 = 0;
+        var sum10 = 0;
+		 if(totalCount) {			
+			 	for(var i = 0; i<totalCount; i++) {
+					var a= $.trim($('#before_book_'+i).html());
+					a = a.replace(',', ''); 
+					if(a != "--") { 
+						sum1 += parseFloat(a);
+					}
+				}  
+				for(var j = 0; j<totalCount; j++) {
+					var b= $.trim($('#before_depn_'+j).html());
+					b = b.replace(',', ''); 
+					if(b != "--") { 
+						sum2 += parseFloat(b);
+					}
+				} 
+				for(var k = 0; k<totalCount; k++) {
+					var c= $.trim($('#before_nbv_'+k).html()); 
+					c = c.replace(',', '');  
+					if(c != "--") { 
+						sum3 += parseFloat(c);
+					} 
+				}  
+				for(var l = 0; l<totalCount; l++) {
+					var d= $.trim($('#between_book_add_'+l).html());
+					d = d.replace(',', ''); 
+					if(d != "--") { 
+						sum4 += parseFloat(d);
+					}
+				} 
+				for(var m = 0; m<totalCount; m++) {
+					var e= $.trim($('#between_book_disposal_'+m).html()); 
+					e = e.replace(',', ''); 
+					if(e != "--") { 
+						sum5 += parseFloat(e);
+					}
+				} 
+				for(var o = 0; o<totalCount; o++) {
+					var f= $.trim($('#after_book_'+o).html());
+					f = f.replace(',', ''); 
+					if(f != "--") { 
+						sum6 += parseFloat(f);
+					}
+				} 
+				for(var n = 0; n<totalCount; n++) {
+					var g= $.trim($('#after_depn_'+n).html());
+					g = g.replace(',', ''); 
+					if(g != "--") { 
+						sum7 += parseFloat(g);
+					}
+				} 
+				for(var p = 0; p<totalCount; p++) {
+					var h= $.trim($('#after_nbv_'+p).html()); 
+					h = h.replace(',', ''); 
+					if(h != "--") { 
+						sum8 += parseFloat(h);
+					}
+				} 
+				for(var lm = 0; lm<totalCount; lm++) {
+					var so= $.trim($('#between_book_add_depre'+lm).html()); 
+					so = so.replace(',', ''); 
+					if(so != "--") { 
+						sum9 += parseFloat(so);
+					}
+				} 
+                for(var depre = 0; depre<totalCount; depre++) {
+                    var last= $.trim($('#between_book_disposal_depr_'+depre).html()); 
+                    last = last.replace(',', ''); 
+                    if(last != "--") { 
+                        sum10 += parseFloat(last);
+                    }
+                } 
+		 } 
+		if(addCommas(sum1.toFixed(2)) == '0.00') {
+			$('#total_before_book').html('--'); 
+		} else {
+			$('#total_before_book').html(addCommas(sum1.toFixed(2))); 
+		}
+		if(addCommas(sum2.toFixed(2)) == '0.00'){
+			$('#total_before_depn').html('--'); 
+		} else {
+			$('#total_before_depn').html(addCommas(sum2.toFixed(2))); 
+		}
+		if(addCommas(sum3.toFixed(2)) == '0.00') {
+			$('#total_before_nbv').html('--'); 
+		} else {
+			$('#total_before_nbv').html(addCommas(sum3.toFixed(2))); 
+		}
+		if(addCommas(sum4.toFixed(2)) == '0.00') {
+			$('#total_between_book_add').html('--'); 
+		} else {
+			$('#total_between_book_add').html(addCommas(sum4.toFixed(2))); 
+		}
+		if(addCommas(sum9.toFixed(2)) == '0.00') {
+			$('#total_between_depr_add').html('--'); 
+		} else {
+			$('#total_between_depr_add').html(addCommas(sum9.toFixed(2))); 
+		}
+		if(addCommas(sum5.toFixed(2)) == '0.00') {
+			$('#total_between_book_disposal').html('--'); 
+		} else {
+			$('#total_between_book_disposal').html(addCommas(sum5.toFixed(2))); 
+		}
+		if(addCommas(sum10.toFixed(2)) == '0.00') {
+			$('#total_between_depr_disposal').html('--'); 
+		} else {
+			$('#total_between_depr_disposal').html(addCommas(sum10.toFixed(2))); 
+		}
+		if(addCommas(sum6.toFixed(2)) == '0.00') {
+			$('#total_after_book').html('--'); 
+		} else {
+			$('#total_after_book').html(addCommas(sum6.toFixed(2))); 
+		}
+		if(addCommas(sum7.toFixed(2)) == '0.00') {
+			$('#total_after_depn').html('--'); 
+		} else {
+			$('#total_after_depn').html(addCommas(sum7.toFixed(2))); 
+		}
+		if(addCommas(sum8.toFixed(2)) == '0.00') {
+			$('#total_after_nbv').html('--'); 
+		} else {
+			$('#total_after_nbv').html(addCommas(sum8.toFixed(2))); 
+		}
+	});
+	function addCommas(nStr)
+	{
+		nStr += '';
+		x = nStr.split('.');
+		x1 = x[0];
+		x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		}
+		return x1 + x2;
+	}
+	
+	
+	var tableToExcel = (function() {
+	  var uri = 'data:application/vnd.ms-excel;base64,'
+		, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+		, base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+		, format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+	  return function(table, name) {
+		if (!table.nodeType) table = document.getElementById(table)
+		var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+		window.location.href = uri + base64(format(template, ctx))
+	  }
+	})()
+</script>

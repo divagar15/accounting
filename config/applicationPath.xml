@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<configdata>
+	<development>
+		<webtitle>Web Accounting Software</webtitle>
+		<weburl>
+			   <sitepath>/accounting_phase2/</sitepath>
+			   <abspath>/var/www/html/accounting_phase2/</abspath>
+			   <imagespath>/accounting_phase2/public/images/</imagespath>
+			   <uploadfilepath>/accounting_phase2/public/uploaded_files/</uploadfilepath>
+			   <stylesheetpath>/accounting_phase2/public/css/</stylesheetpath>
+			   <scriptpath>/accounting_phase2/public/js/</scriptpath>
+			   <pluginpath>/accounting_phase2/public/plugins/</pluginpath>
+			   <uploadpath>/accounting_phase2/public/uploads/</uploadpath>
+			   <receiptuploadpath>/accounting_phase2/public/uploads/receipts/</receiptuploadpath>
+		</weburl>
+		<cacheurl>/accounting_phase2/cache/</cacheurl>
+		<perpagevalue>10</perpagevalue>
+		<footertext>@CopyRight Web Accounting Software Demo - </footertext>
+	</development>
+	<production extends="development">
+			<weburl>
+			   <sitepath>/~ummadc/demo/accounting/</sitepath>
+			   <abspath>/var/www/html/~ummadc/demo/accounting/</abspath>
+			   <imagespath>/~ummadc/demo/accounting/public/images/</imagespath>
+			   <uploadfilepath>/~ummadc/demo/accounting/public/uploaded_files/</uploadfilepath>
+			   <stylesheetpath>/~ummadc/demo/accounting/public/css/</stylesheetpath>
+			   <scriptpath>/~ummadc/demo/accounting/public/js/</scriptpath>
+			   <pluginpath>/~ummadc/demo/accounting/public/plugins/</pluginpath>
+			   <uploadpath>/accounting/public/uploads/</uploadpath>
+			   <receiptuploadpath>/accounting/public/uploads/receipts/</receiptuploadpath>
+		</weburl>
+		<cacheurl>/Zend_Practice/cache/</cacheurl>
+		<perpagevalue>10</perpagevalue>
+	</production>
+</configdata>

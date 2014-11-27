@@ -1,0 +1,400 @@
+<div id="popup">
+<span class="button b-close"><span>X</span></span>
+<div class="row" id="add_payment">
+ <h4>Add Payment</h4>
+<div class="widget-container col-md-12 col-md-offset-1">
+ <form class="form-horizontal" id="add-payment" method="post">
+    <div class="form-group">
+      <label class="control-label col-lg-4">Payment Date <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <input type="hidden" name="invoice_id" id="invoice_id" />
+            <input type="hidden" name="pay_id" id="pay_id" />
+            <input type="text" name="date" id="date" class="form-control date-pick" placeholder="Select Date"  />
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Payment Account <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+             <select class="form-control" name="pay_account" id="pay_account">
+                <option value="">Select</option>
+                    <?php
+                        if(isset($this->payAccount) && !empty($this->payAccount)) {
+                            foreach ($this->payAccount as $payAccount) {
+                    ?>
+                        <option value="<?php echo $payAccount['id']; ?>"><?php echo $payAccount['account_name']; ?></option>
+                    <?php
+                            }
+                        }
+                    ?>                                                       
+              </select>
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Amount <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <input type="text" name="pay_amount" id="pay_amount" class="form-control" placeholder="Enter Amount"  />
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Payment Method <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+          <select name="pay_method" id="pay_method" class="form-control">
+            <option value="">Select</option>
+           <?php 
+                foreach ($this->payMethod as $key => $pay) {
+           ?>
+                <option value="<?php echo $key; ?>"><?php echo $pay; ?></option>
+           <?php
+                }
+           ?>
+          </select>
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Bank Cheque / Draft No </label>
+        <div class="col-lg-5">
+            <input type="text" name="cheque_draft_no" id="cheque_draft_no" class="form-control" placeholder="Enter Cheque / Draft No"  />
+        </div>
+    </div>
+     <div class="form-group">
+      <label class="control-label col-lg-4">Prompt Payment Discount <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <select class="form-control" name="payment_discount" id="payment_discount" onchange="discountPayment(this.value);">
+                <option value="1">Yes</option>  
+                <option value="2" selected>No</option>  
+            </select>
+        </div>
+    </div>
+     <div class="form-group">
+      <label class="control-label col-lg-4">Discount Amount <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <input type="text" name="discount_amount" id="discount_amount" class="form-control" value="0" disabled />
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Addition Description / Notes </label>
+        <div class="col-lg-5">
+        <textarea name="description" id="description" class="form-control"></textarea>
+        </div>
+    </div>
+
+     <div class="form-group">
+        <div class="col-lg-8 col-lg-offset-3">
+            <div class="form-actions">
+               <input type="submit" name="update_payment" class="btn btn-primary " id="update_payment" value="Update Payment" />
+                <button type="reset" class="btn">Cancel</button>
+            </div>
+        </div>
+     </div>
+
+</form>
+</div>
+</div>
+</div>
+
+
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            </div>
+   </div>
+<div class="row">
+<div class="col-md-12">
+                            <div class="square-widget">
+                                <div class="widget-head clearfix">
+                                    <h4 class="pull-left"><i class="icon-user-4"></i> Invoice Transaction Details</h4>
+                                </div>
+                                <div class="widget-container" style="margin-left:50px;">
+                                        <strong>Invoice No : </strong>
+                                        <span><?php echo $this->invoice[0]['invoice_no']; ?></span> <br/>
+                                        <strong>Date : </strong>
+                                        <span><?php echo date("d-m-Y",strtotime($this->invoice[0]['date'])); ?></span><br>
+                                        <strong>Customer / Payee : </strong>
+                                        <span><?php echo $this->invoice[0]['customer_name']; ?></span><br>
+                                        <strong>Credit Term: </strong>
+                                        <span>
+                                        <?php 
+                                          if(isset($this->creditTerm) && !empty($this->creditTerm)) {
+                                              foreach ($this->creditTerm as $key => $credit) {
+                                                if($key==$this->invoice[0]['credit_term']) {
+                                                  echo $credit;
+                                                }
+                                              }
+                                          }
+                                        ?>
+                                        </span>
+                                        <br>
+                                        <strong>Transaction Currency: </strong>
+                                        <span>
+                                        <?php 
+                                          if(isset($this->currencies) && !empty($this->currencies)) {
+                                            foreach ($this->currencies as $key => $currency) {
+                                              if($key==$this->invoice[0]['transaction_currency']) {
+                                                  echo $currency." - ".$key;
+                                                }
+                                            }
+                                          }
+                                        ?>
+                                        </span>
+                                        <br>
+                                        <strong>Due Date : </strong>
+                                        <span><?php echo date("d-m-Y",strtotime($this->invoice[0]['due_date'])); ?></span><br>
+                                        <strong>Prompt Payment Discount : </strong>
+                                        <span><?php if($this->invoice[0]['discount_status']==1) { echo "Yes";} else if($this->invoice[0]['discount_status']==2) { echo "No"; } ?></span><br>
+                                        <strong>Non Revenue Supply (Tax) : </strong>
+                                        <span><?php if($this->invoice[0]['non_revenue_tax']==1) { echo "Yes";} else if($this->invoice[0]['non_revenue_tax']==2) { echo "No"; } ?></span> <br/>
+                                        <strong>Memo : </strong>
+                                        <span><?php echo $this->invoice[0]['memo']; ?></span> <br/>
+                                        <strong>D.O / S.O No : </strong>
+                                        <span><?php echo $this->invoice[0]['do_so_no']; ?></span> <br/>
+                                        <strong>Shipping Address : </strong>
+                                        <span><?php echo ucfirst($this->invoice[0]['shipping_address1']); ?></span> <br/>
+                                        <strong>Status : </strong>
+                                        <span>
+                                        <?php 
+                                            if($this->invoice[0]['invoice_status']==1) {
+                                                echo "Saved";
+                                            } else if($this->invoice[0]['invoice_status']==2) {
+                                                echo "Draft";
+                                            } else  if($this->invoice[0]['invoice_status']==3) {
+                                                echo "Sent";
+                                            } 
+                                        ?>
+                                        </span> 
+                                        <br/>
+                                </div>
+                            </div>
+                        </div>
+<div class="row">
+                         <div class="col-md-12">
+                            <div class="square-widget">
+                                <h5 class="pull-left"><i class="icon-user-4"></i> Product Details</h5>
+                                <div class="widget-container">
+                                    <table class="table responsive">
+                                        <thead>
+                                            <tr>
+                                            <th style="width:2%;"></th>
+                                                <th>
+                                                    Product ID
+                                                </th>
+                                                <th>
+                                                    Product Description
+                                                </th>
+                                                <th>
+                                                    Quantity
+                                                </th>
+                                                <th>
+                                                    Unit Price
+                                                </th>
+                                                 <th>
+                                                    Discount
+                                                </th>
+                                                <th>
+                                                    Tax Code
+                                                </th>
+                                                <th>
+                                                    Amount
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="invoice_detail">
+                                        <?php
+                                            $j=1;
+                                            $total_gst = 0.00;
+                                            $sub_total = 0.00;
+                                            foreach ($this->invoiceProductList  as $invoiceProduct) {
+                                                $net_amount = $invoiceProduct['quantity'] * $invoiceProduct['unit_price'] - $invoiceProduct['discount_amount'];
+                                                $total_gst += $net_amount * $invoiceProduct['tax_value'] / 100;
+                                                $sub_total += $net_amount;
+                                        ?>
+                                            <tr>
+                                                <td style="width:2%;"></td>
+                                                <td style="width:15%;">
+                                                    <?php echo $invoiceProduct['product_id']; ?>
+                                                </td>
+                                                <td style="width:20%;">
+                                                        <?php
+                                                            foreach ($this->product as $product) {
+                                                                if($invoiceProduct['product_description']==$product['id']) {
+                                                                    echo ucfirst($product['name'])." - ".$product['description'];
+                                                                }
+                                                            }
+                                                        ?>
+                                                        
+                                                </td>
+                                                <td style="width:5%;">
+                                                    <?php echo $invoiceProduct['quantity']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $invoiceProduct['unit_price']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $invoiceProduct['discount_amount']; ?>
+                                                </td>
+                                                <td style="width:15%;">
+                                                    <?php
+                                                        if(isset($this->taxCode) && !empty($this->taxCode)) {
+                                                            foreach ($this->taxCode as $tax) {
+                                                                if($invoiceProduct['fktax_id']==$tax['id']) {
+                                                                  echo $tax['tax_code']." - ".$tax['tax_percentage']." %"; 
+                                                                }
+                                                            }
+                                                        }
+                                                    ?>                                                  
+                                                </td>
+                                                <td>
+                                                    <strong id="net_amount_<?php echo $j; ?>"><?php echo $net_amount; ?></strong>
+                                                </td>
+                                            </tr>
+                                            <?php 
+                                                    $j++;
+                                                }
+                                            ?>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-4 col-md-offset-10">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Sub Total : <?php echo $sub_total; ?></label>
+                                    <span id="sub_total"></span> <br/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-md-offset-10">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Total GST : <?php echo $total_gst; ?></label>
+                                    <span id="total_gst"></span>
+                             </div>
+                        </div>
+
+                            <div class="row">
+                            <div class="col-md-4 col-md-offset-10">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Grand Total : <?php echo $over_all = $sub_total+$total_gst; ?></label>
+                                    <span id="grand_total"></span>
+                                </div>
+                             </div>
+                            <div class="row">
+                            <div class="col-md-4 col-md-offset-10">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Grand Total SGD :</label>
+                                    <span id="grand_total_sgd"></span>
+                                </div>
+                             </div>
+
+                            </div>
+</div>
+
+
+<div class="row">
+                         <div class="col-md-12">
+                            <div class="square-widget">
+                                <h5 class="pull-left"><i class="icon-user-4"></i> Payment Details</h5>
+                                <div class="widget-container">
+                                    <table class="table responsive">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Date
+                                                </th>
+                                                <th>
+                                                    Description
+                                                </th>
+                                                <th>
+                                                    Payment Method
+                                                </th>
+                                                <th>
+                                                    Amount
+                                                </th>
+                                                <th>
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php 
+                                            $paid_amount = 0.00;                                          
+                                            foreach ($this->invoicePayment  as $payment) {
+                                                $paid_amount += $payment['payment_amount'];
+                                        ?>
+                                            <tr>
+                                                <td><?php echo date("d-m-Y",strtotime($payment['date'])); ?></td>
+                                                <td><?php echo ucfirst($payment['payment_description']); ?></td>
+                                                <td>
+                                                <?php 
+                                                    foreach ($this->payMethod as $key => $pay) {
+                                                        if($key==$payment['payment_method']) {
+                                                            echo $pay;
+                                                        }
+                                                    }
+                                                 ?>
+                                                </td>
+                                                <td><?php echo $payment['payment_amount']; ?></td>
+                                                <td>
+
+                                            <a href="javascript:void(0)" onclick="return editPayment('<?php echo $this->inv_id; ?>','<?php echo $payment['id']; ?>','<?php echo $payment['discount_status']; ?>','<?php echo $payment['discount_amount']; ?>','<?php echo $payment['payment_description']; ?>','<?php echo date("d-m-Y",strtotime($payment['date'])); ?>','<?php echo $payment['fkpayment_account']; ?>','<?php echo $payment['payment_amount']; ?>','<?php echo $payment['payment_method']; ?>','<?php echo $payment['cheque_draft_no']; ?>')" data-original-title="Edit Payment" title="Edit Payment"><i class="icon-pencil-2"></i></a>
+
+                                            <a href="javascript:void(0)" onclick="return deletePayment('<?php echo base64_encode($this->inv_id); ?>','<?php echo base64_encode($payment['id']); ?>');" data-original-title="Delete Payment" title="Delete Payment"><i class="icon-remove-2"></i></a>                                                    
+                                                </td>
+                                            </tr>
+                                        <?php
+                                            }
+                                        ?>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+
+                 <div class="row">
+                            <div class="col-md-4 col-md-offset-9">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Amount Due :</label>
+                                    <span id=""><?php echo $over_all - $paid_amount; ?></span>
+                                </div>
+                             </div>
+<script type="text/javascript">
+
+function editPayment(Invid,Idvalue,discount_status,discount_amount,description,date,pay_account,pay_amount,pay_method,cheque) {
+    $("#invoice_id").val(Invid);
+    $("#pay_id").val(Idvalue);
+    $("#payment_discount").val(discount_status);
+    $("#discount_amount").val(discount_amount);
+    $("#description").val(description);
+    $("#date").val(date);
+    $("#pay_account").val(pay_account);
+    $("#pay_amount").val(pay_amount);
+    $("#pay_method").val(pay_method);
+    $("#cheque_draft_no").val(cheque);
+        $('#popup').bPopup({
+            modalClose: false,
+            easing: 'easeOutBack', 
+            speed: 1000,
+            transition: 'slideDown',
+            follow: [false, false], 
+    });
+}
+
+function deletePayment(Invid,Idvalue) {
+  var confirmMsg = confirm("Are you sure want to delete this payment made for invoice? You cannot undo this action");
+    if(confirmMsg) {
+            window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/view/delid/'+Idvalue+'/id/'+Invid;
+    }
+}
+
+</script>

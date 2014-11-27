@@ -1,0 +1,383 @@
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li><a href="<?php echo $this->sitePath."transaction/fixedassets/"; ?>">Fixed Assets</a></li>
+   <li class="active">Add</li>
+</ul>
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            <div class="alert alert-success" id="success" style="display:none;">
+            </div>
+            <div class="alert alert-danger" id="failure" style="display:none;">
+            </div>
+            </div>
+   </div>
+   <?php
+    $logSession = new Zend_Session_Namespace('sess_login');
+   ?>
+   <?php 
+       if($logSession->type!=5 && $logSession->proxy_type!=5) {
+   ?>
+ 
+     <div class="row">
+
+
+                        <div class="col-md-12 widget-module">
+
+                            <div class="square-widget widget-collapsible">
+                                <div class="widget-head clearfix">
+                                    <h4 class="pull-left"><i class="icon-paragraph-justify-2"></i> New Fixed Assets Entry</h4>
+                                </div>
+
+                                <div class="widget-container col-md-12">
+                                <form class="form-horizontal" id="add-fixedassets" method="post">
+
+                                    <div class="form-group">
+                                        <label class="control-label"><input type="checkbox" name="new_asset" id="new_asset" onclick="return newAsset();" checked />
+                                        <span>New Assets?</span></label>
+                                      </div>
+
+                                        <div class="form-group">
+
+                                            <div class="col-lg-2">
+                                              <label>Date <span class="mandatory">*</span></label>
+                                                <input type="text" name="date" id="date" class="form-control date-pick" placeholder="Select Date" value="<?php echo date('d-m-Y'); ?>" required autocomplete="off" />
+
+                                                <input type="hidden" name="expense_id" id="expense_id" value="0">
+
+                                                <input type="hidden" name="submit_type" id="submit_type" value="0" />
+
+                                                <input type="hidden" name="today" id="today" class="form-control date-pick" value="<?php echo date('d-m-Y', strtotime('last day of previous month')); ?>" />
+
+                                                <?php
+                                                  $splitYear = explode('-', $this->fend);
+                                                  $fend      = $splitYear[2].'-'.$splitYear[1].'-'.($splitYear[0]-1);
+                                                ?>
+                                                <input type="hidden" name="fend" id="fend" class="form-control date-pick" value="<?php echo $fend; ?>" />
+                                                
+                                            </div>
+
+                                            <div class="col-lg-3">
+                                            <label>Receipt No <span class="mandatory">*</span></label>
+                                                <input type="text" name="receipt" id="receipt" class="form-control" placeholder="Enter Receipt No" value="" autocomplete="off" required  />
+                                            </div> 
+
+                                            <div class="col-lg-2">
+                                             <label>Vendor <span class="mandatory">*</span> </label>
+                                             <div id="vendorRefresh">
+                                                <select class="select2" name="vendor" id="vendor" required>
+                                                    <?php
+                                                        if(isset($this->vendor) && !empty($this->vendor)) {
+                                                            foreach ($this->vendor as $vendor) {
+                                                              $coa = $vendor['coa_link'];
+                                                                /*if($vendor['id']==$this->expense[0]['fkvendor_id'])
+                                                                    $vendorSelect = 'selected';
+                                                                else*/
+                                                                    $vendorSelect = '';
+                                                    ?>
+                                                        <option value="<?php echo $vendor['id']; ?>" <?php echo $vendorSelect; ?> data-coa='<?php echo $coa; ?>'><?php echo ucfirst($vendor['vendor_name']); ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                    
+                                                </select>
+                                                </div>
+                                            </div> 
+
+
+
+                                            <div class="col-lg-3">
+                                            <label>System generated Ref No <span class="mandatory">*</span></label>
+                                                <input type="text" name="expense_no" id="expense_no" class="form-control" placeholder="System Generated Ref No" required value="" autocomplete="off"  />
+                                                
+                                            </div> 
+
+
+                                             <div class="col-lg-2">
+                                             <label>Branch <span class="mandatory">*</span></label>
+                                                <select class="select2" name="location" id="location" required>
+                                                <!-- <option value="">Select</option> -->  
+                                                     <?php
+                                                        if(isset($this->location) && !empty($this->location)) {
+                                                            foreach ($this->location as $location) {
+                                                              /*if($location['id']==$this->expense[0]['fklocation_id']) {
+                                                                $locationSelect = 'selected';
+                                                              } else {*/
+                                                                $locationSelect = '';
+                                                            //  }
+                                                    ?>
+                                                        <option value="<?php echo $location['id']; ?>" <?php echo $locationSelect; ?>><?php echo ucwords($location['name']); ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                      
+                                                </select>
+                                            </div> 
+                                             
+
+                                        </div>
+
+                                        <div class="form-group">
+
+                                        <div class="col-lg-3">
+                                             <label>FA COA <span class="mandatory">*</span></label>
+                                             <select class="form-control" name="fa_coa" id="fa_coa" required onchange="return faYears(this.value);">
+                                                    <option value="">Select</option>    
+                                                    <?php
+                                                        $useful_years = 0;
+                                                        if(isset($this->fixedAccount) && !empty($this->fixedAccount)) {
+                                                            foreach ($this->fixedAccount as $fixed) {
+                                                                $id = $fixed['id'].'_'.$fixed['useful_years_of_life'];
+                                                                /*if($this->expense[0]['fkexpense_type']==$fixed['ref_id']) {
+                                                                    $expenseSelect = 'selected';
+                                                                    $useful_years  = $fixed['useful_years_of_life'];
+                                                                }
+                                                                else {*/
+                                                                    $expenseSelect = '';
+                                                                //  }
+                                                    ?>
+                                                        <option value="<?php echo $id; ?>" <?php echo $expenseSelect; ?>><?php echo ucfirst($fixed['account_name']); ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                      
+                                                </select>
+                                        </div>
+
+                                         <div class="col-lg-3">
+                                            <label>FA Description <span class="mandatory">*</span></label>
+                                                <input type="text" name="description" id="description" class="form-control" placeholder="Enter Description" value="" required autocomplete="off"  />
+                                                
+                                         </div>
+
+                                         <div class="col-lg-2">
+                                            <label>FA ID/ Tag <span class="mandatory"></span></label>
+                                                <input type="text" name="fa_id" id="fa_id" class="form-control" placeholder="Enter FA ID / Tag" value="" autocomplete="off"  onchange="checkFaid(this.value);" />
+                                                <label for="fa_id" generated="true" class="error faid_error" style="display:none;"></label>
+                                         </div>
+
+                                          <div class="col-lg-2">
+                                             <label>FA Life (Years) / % <span class="mandatory">*</span></label>
+                                             <select class="form-control" name="fa_years" id="fa_years" required>
+                                                    <option value="">Select</option>    
+                                                    <?php
+                                                        if(isset($this->faYears) && !empty($this->faYears)) {
+                                                            foreach ($this->faYears as $key => $faYear) {
+                                                                $faSelect = '';
+                                                    ?>
+                                                        <option value="<?php echo $key ?>" <?php echo $faSelect ?>><?php echo $faYear; ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                      
+                                                </select>
+                                        </div>
+
+                                        <div class="col-lg-2">
+                                             <label>Depreciation Frequency <span class="mandatory">*</span></label>
+                                             <select class="form-control" name="frequency" id="frequency" required>
+                                                    <option value="">Select</option>    
+                                                    <?php
+                                                        if(isset($this->faFrequency) && !empty($this->faFrequency)) {
+                                                            foreach ($this->faFrequency as $key => $frequency) {
+                                                    ?>
+                                                        <option value="<?php echo $key ?>"><?php echo $frequency; ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                      
+                                                </select>
+                                        </div>
+
+
+
+                                        </div>    
+
+                                        <div class="form-group">
+
+                                       
+
+                                          <div class="col-lg-2">
+                                          <label>Purchase Price <span class="mandatory">*</span></label>
+                                          <input type="text" name="purchase_price" id="purchase_price" class="form-control amount-align" required number="true"  value="0.00"  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);" onkeyup="return netBook();" />
+                                          </div>
+
+                                          <div class="col-lg-2">
+                                              <label>Depreciation Till </label>
+                                                <input type="text" disabled name="depreciation_date" id="depreciation_date" class="form-control date-pick" placeholder="Select Date" value="" required autocomplete="off" />
+
+                                                
+                                            </div>
+
+                                          <div class="col-lg-2">
+                                          <label>Accumulated Depreciation <span class="mandatory">*</span></label>
+                                          <input type="text" name="accumulated_depreciation" id="accumulated_depreciation" class="form-control amount-align"  number="true"  value="0.00"  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);" readonly onkeyup="return netBook();" />
+                                          </div>
+
+
+                                          <div class="col-lg-2">
+                                          <label>Disposal <span class="mandatory">*</span></label>
+                                          <input type="text" name="disposal" id="disposal" class="form-control amount-align"  number="true"  value="0.00"  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);" readonly />
+                                          </div>
+
+                                          <div class="col-lg-2">
+                                          <label>Net Book Value <span class="mandatory">*</span></label>
+                                          <input type="text" name="netbookvalue" id="netbookvalue" class="form-control amount-align"  number="true"  value="0.00"  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);" readonly />
+                                          </div>
+
+                                          <div class="col-lg-2">
+                                          <label>Profit / Loss on Disposal <span class="mandatory">*</span></label>
+                                          <input type="text" name="pl_disposal" id="pl_disposal" class="form-control amount-align"  number="true"  value="0.00"  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);" readonly />
+                                          </div>
+
+
+                                        </div>                                    
+
+
+      
+
+                             <div class="form-group">
+                                    <div class="col-lg-1">
+                                         <div class="form-actions">
+                                            <input type="submit" name="add_fixed_assets" class="add_fixed_assets btn btn-primary" id="add_fixed_assets" value="Add / Save"  /><br/>
+                                            <i>Save Fixed Assets</i>
+                                          </div>
+                                      </div>
+                                      <?php 
+                                              if($logSession->type!=4 && $logSession->type!=5 && $logSession->proxy_type!=4 && $logSession->proxy_type!=5) {
+                                      ?>
+                                       <div class="col-lg-1" style="margin-left:10px;">
+                                         <div class="form-actions">
+                                            <input type="submit" name="approve_journal" class="btn btn-primary approve_fixed_assets" id="approve_journal" value="Approve" /><br/>
+                                            <i>Once approved cannot be edited</i>
+                                            </div>
+                                         </div>
+                                       <?php
+                                                }
+                                        ?>
+                                         <div class="col-lg-1" style="margin-left:0px;">
+                                         <div class="form-actions">
+                                         <a href="<?php echo $this->sitePath."transaction/fixedassets"; ?>">
+                                            <button type="button" class="btn">Cancel</button>
+                                         </a>
+                                            </div>
+                                         </div>
+                                    </div>
+
+                               
+
+                                </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+     
+   <?php 
+        }
+    ?>
+<script type="text/javascript">
+
+function netBook() {
+  var price = $('#purchase_price').val();
+  if($("#new_asset").is(':checked')) {
+    var accDepn = 0.00;
+    var amount = numberWithCommas(price,'format');
+  } else {
+    var accDepn = $('#accumulated_depreciation').val();
+    var amount = numberWithCommas(price,'format')-numberWithCommas(accDepn,'format');
+  }
+  
+  var netAmount = numberWithCommas(amount,'normal');
+  $('#netbookvalue').val(netAmount);
+
+}
+
+function newAsset() {
+  if($("#new_asset").is(':checked')) {
+    $("#accumulated_depreciation").attr('readonly','readonly');
+    $("#depreciation_date").attr('disabled','disabled');
+  } else {
+    $("#accumulated_depreciation").removeAttr('readonly');
+    $("#depreciation_date").removeAttr('disabled'); 
+  }
+}
+
+
+ function numberWithCommas(x,action) {
+  if(action=='normal') {
+    var amount = parseFloat(x).toFixed(2);
+    var value = amount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+    return value;
+  } else if(action=='format')  {
+    var value  = x.replace(/\,/g,''); 
+    //alert(value);
+    return value;
+  }
+}
+
+ function numberWithCommasInput(x,id) {
+    //return false;
+    if(id=='') {
+        var x = x.replace(",","");
+        var amount = parseFloat(x).toFixed(2);
+        var value  = amount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+        return value;
+    } else {
+        var x = x.replace(",","");
+        var amount = parseFloat(x).toFixed(2);
+        var value  = amount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+        $("#"+id).val(value);
+    }
+}
+
+
+function faYears(value) {
+  //alert(value);
+  if(value!='') {
+    var splitted = value.split('_');
+    $("#fa_years").val(splitted[1]);
+  } else {
+    $("#fa_years").val('');
+  }
+}
+
+
+  function checkFaid(value) {
+        if((value!='')) {
+            $.ajax({
+              type: "POST",
+              url: "<?php echo $this->sitePath.'transaction/fixedassets/ajax-refresh'; ?>",
+              data: 'action=check_faid&faid='+value,
+              success: function (html) {
+                  if(html=='1') {
+                     $(".faid_error").html("");
+                     $(".faid_error").hide();
+                     return true;
+                  } else if(html=='2') {
+                     $(".faid_error").html("FA ID / Tag "+ value +" already exists");
+                     $("#fa_id").val("");
+                     $(".faid_error").show();
+                  }
+              }
+            }); 
+        } 
+  }
+
+
+
+</script>

@@ -1,0 +1,422 @@
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            </div>
+   </div>
+   <?php
+    $logSession = new Zend_Session_Namespace('sess_login');
+   ?>
+   <?php 
+        if($logSession->type!=5) {
+   ?>
+ 
+     <div class="row">
+
+
+                        <div class="col-md-12 widget-module">
+
+                            <div class="square-widget widget-collapsible">
+                                <div class="widget-head clearfix">
+                                    <h4 class="pull-left"><i class="icon-paragraph-justify-2"></i> Copy Invoice</h4>
+
+                                </div>
+
+                                <div class="widget-container col-md-12">
+
+                                <form class="form-horizontal" id="add-credit" method="post">
+                                        <div class="form-group">
+                                            <div class="col-lg-2">
+                                              <label>Date <span class="mandatory">*</span></label>
+                                                <input type="text" name="date" id="date" class="form-control date-pick" placeholder="Select Date" value="<?php echo date("d-m-Y",strtotime($this->invoice[0]['date'])); ?>" autocomplete="off" />
+                                            </div>
+                                            
+                                            <div class="col-lg-2">
+                                            <label>Credit No </label>
+                                                <input type="text" name="credit_no" id="credit_no" class="form-control" readonly value="<?php echo $this->creditNo; ?>" />
+                                            </div> 
+                                               
+                                            <div class="col-lg-2">
+                                             <label>Customer Name <span class="mandatory">*</span></label>
+                                                <select class="select2" name="customer" onchange="return shippingAddress(this.value);">
+                                                    <option value="">Select</option>
+                                                    <?php
+                                                        if(isset($this->customer) && !empty($this->customer)) {
+                                                            foreach ($this->customer as $customer) {
+                                                                if($customer['id']==$this->invoice[0]['fkcustomer_id'])
+                                                                    $customerSelect = 'selected';
+                                                                else
+                                                                    $customerSelect = '';
+                                                    ?>
+                                                        <option value="<?php echo $customer['id']; ?>" <?php echo $customerSelect; ?>><?php echo $customer['customer_name']; ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                    
+                                                </select>
+                                                <a href="<?php echo $this->sitePath."business/customer/add"; ?>" title="Click to add new customer" data-title="Click to add new customer" target="_blank"><i class="icon-plus-circle-2"></i> Add New Customer</a>
+                                            </div> 
+                                            
+                                             <div class="col-lg-2">
+                                             <label>Currency <span class="mandatory">*</span></label>
+                                                <select class="select2" name="currency">
+                                                     <?php
+                                                        if(isset($this->currencies) && !empty($this->currencies)) {
+                                                            foreach ($this->currencies as $key => $currency) {
+                                                                if($this->invoice[0]['transaction_currency']==$key) 
+                                                                    $currencySelect = "selected";
+                                                                else
+                                                                    $currencySelect = "";
+                                                    ?>
+                                                        <option value="<?php echo $key; ?>" <?php echo $currencySelect; ?>><?php echo $currency; ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                      
+                                                </select>
+                                            </div> 
+
+
+                                            <div class="col-lg-2">
+                                             <label>Invoice No <span class="mandatory">*</span></label>
+                                                <select class="select2" name="invoice" id="invoice" onchange="return shippingAddress(this.value);">
+                                                    <?php
+                                                        if(isset($this->invoice) && !empty($this->invoice)) {
+                                                            foreach ($this->invoice as $invoice) {
+                                                              if($this->inv_id==$invoice['id'])
+                                                                $invoiceSelect = 'selected';
+                                                              else
+                                                                $invoiceSelect = '';
+                                                    ?>
+                                                        <option value="<?php echo $invoice['id']; ?>" <?php echo $invoiceSelect; ?>><?php echo $invoice['invoice_no']; ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                    
+                                                </select>
+                                                <a href="<?php echo $this->sitePath."transaction/invoice/add"; ?>" title="Click to add new invoice" data-title="Click to add new invoice" target="_blank"><i class="icon-plus-circle-2"></i> Add New Invoice</a>
+                                            </div> 
+                                        </div>
+
+                                        <div class="form-group">
+
+                                          
+
+                                             <div class="col-lg-2">
+                                              <label>Memo </label><br/>
+                                                <textarea name="memo" id="memo" class="form-control"><?php echo $this->invoice[0]['memo'] ?></textarea>
+                                            </div>
+
+                                        </div>
+
+                        <div class="col-md-12">
+                            <div class="square-widget">
+                                
+                                <div class="widget-container">
+                                    <table class="table responsive">
+                                        <thead>
+                                            <tr>
+                                            <th style="width:2%;"></th>
+                                                <th>
+                                                    Product ID
+                                                </th>
+                                                <th>
+                                                    Product Description
+                                                </th>
+                                                <th>
+                                                    Quantity
+                                                </th>
+                                                <th>
+                                                    Unit Price
+                                                </th>
+                                                <th>
+                                                    Tax Code
+                                                </th>
+                                                <th>
+                                                    Amount
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="credit_detail">
+                                        <?php
+                                            $j=1;
+                                            $total_gst = 0.00;
+                                            $sub_total = 0.00;
+                                            foreach ($this->invoiceProductList  as $invoiceProduct) {
+                                                $net_amount = $invoiceProduct['quantity'] * $invoiceProduct['unit_price'];
+                                                $total_gst += $net_amount * $invoiceProduct['tax_value'] / 100;
+                                                $sub_total += $net_amount;
+                                        ?>
+                                            <tr>
+                                                <td style="width:2%;"></td>
+                                                <td style="width:15%;">
+                                                    <input type="hidden" name="pid_<?php echo $j; ?>" id="pid_<?php echo $j; ?>" value="<?php echo $invoiceProduct['id']; ?>" />
+                                                    <input type="text" name="product_id_<?php echo $j; ?>" id="product_id_<?php echo $j; ?>" class="form-control" placeholder="Enter Product ID" required readonly value="<?php echo $invoiceProduct['product_id']; ?>" />
+                                                </td>
+                                                <td style="width:20%;">
+                                                    <select name="product_description_<?php echo $j; ?>" id="product_description_<?php echo $j; ?>" class="form-control" onchange="return productSelect('<?php echo $j; ?>',this.value);" required>
+                                                        <?php
+                                                            foreach ($this->product as $product) {
+                                                                if($invoiceProduct['product_description']==$product['id'])
+                                                                    $productSelect = 'selected';
+                                                                else
+                                                                    $productSelect = '';
+                                                        ?>
+                                                            <option value="<?php echo $product['id']."_".$product['product_id']."_".$product['price']; ?>" <?php echo $productSelect; ?>><?php echo ucfirst($product['name'])." - ".$product['description']; ?></option>
+                                                        <?php
+                                                            }
+                                                        ?>
+                                                        
+                                                    </select>
+                                                </td>
+                                                <td style="width:5%;">
+                                                    <input type="text" name="quantity_<?php echo $j; ?>" id="quantity_<?php echo $j; ?>" class="form-control" required number="true" minlength="1" maxlength="3" onkeyup="return calculateTotal();" value="<?php echo $invoiceProduct['quantity']; ?>" autocomplete="off"/>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="price_<?php echo $j; ?>" id="price_<?php echo $j; ?>" class="form-control" placeholder="Enter Price" required number="true" onkeyup="return calculateTotal();" readonly value="<?php echo $invoiceProduct['unit_price']; ?>" />
+                                                </td>
+                                                <td style="width:15%;">
+                                                    <select class="form-control" name="tax_code_<?php echo $j; ?>" id="tax_code_<?php echo $j; ?>" required  onchange="return calculateTotal();">
+                                                    <?php
+                                                        if($invoiceProduct['fktax_id']==0) {
+                                                            $taxSelect = 'selected';
+                                                        } else {
+                                                            $taxSelect = '';
+                                                        }
+                                                    ?>
+                                                    <option value="0" <?php echo $taxSelect; ?> title="Not Applicable">NA</option>
+                                                    <?php
+                                                        if(isset($this->taxCode) && !empty($this->taxCode)) {
+                                                            foreach ($this->taxCode as $tax) {
+                                                                if($invoiceProduct['fktax_id']==$tax['id'])
+                                                                    $taxSelect = 'selected';
+                                                                else
+                                                                    $taxSelect = '';
+                                                    ?>
+                                                        <option value="<?php echo $tax['id']."_".$tax['tax_percentage']; ?>" <?php echo $taxSelect; ?> title="<?php echo ucfirst($tax['description']); ?>"><?php echo $tax['tax_code']." - ".$tax['tax_percentage']." %"; ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                  
+                                                </select>
+                                                </td>
+                                                <td>
+                                                    <strong id="net_amount_<?php echo $j; ?>"><?php echo $net_amount; ?></strong>
+                                                </td>
+                                            </tr>
+                                            <?php 
+                                                    $j++;
+                                                }
+                                            ?>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="form-group">
+                            <div class="col-lg-4 col-md-offset-10">
+                              <div class="form-group">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Sub Total : </label>
+                                   <div class="col-lg-4">
+                                    <span id="sub_total"><?php echo $sub_total; ?></span>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Total GST : </label>
+                                   <div class="col-lg-4">
+                                    <span id="total_gst"><?php echo $total_gst; ?></span>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Grand Total : </label>
+                                   <div class="col-lg-4">
+                                    <span id="grand_total"><?php echo $sub_total+$total_gst; ?></span>
+                                </div>
+                             </div>
+                             <div class="form-group">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Grand Total SGD :</label>
+                                   <div class="col-lg-4">
+                                    <span id="grand_total_sgd"></span>
+                                </div>
+                             </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-lg-3">
+                                
+                                <input type="hidden" name="product_counter" id="product_counter" value="<?php echo --$j; ?>" />
+                                <a href="javascript:void(0)" id="credit_row" class="btn btn-primary green" type="button">Add Row</a>
+                            </div>
+                        </div>
+
+
+                                  <div class="form-group">
+                                    <div class="col-lg-1">
+                                         <div class="form-actions">
+                                            <input type="hidden" name="action" id="action" value="save_draft_credit" />
+                                            <input type="button" name="save_draft_credit" class="btn btn-primary" id="save_draft_credit" value="Save as Draft" onclick="return saveDraft();" /><br/>
+                                            <i>Save Draft Credit</i>
+                                          </div>
+                                      </div>
+                                       <div class="col-lg-1" style="margin-left:10px;">
+                                         <div class="form-actions">
+                                            <input type="submit" name="unapprove_save" class="btn btn-primary add_credit_transaction" id="unapprove_save" value="For Approval" /><br/>
+                                            <i>Save Credit for approval</i>
+                                          </div>
+                                      </div>
+                                       <div class="col-lg-1" style="margin-left:10px;">
+                                         <div class="form-actions">
+                                            <input type="submit" name="approve_invoice" class="btn btn-primary add_credit_transaction" id="approve_invoice" value="Approve" /><br/>
+                                            <i>Approve Credit for account posting</i>
+                                            </div>
+                                         </div>
+                                         <div class="col-lg-1" style="margin-left:0px;">
+                                         <div class="form-actions">
+                                            <button type="button" class="btn"><a href="<?php echo $this->sitePath."transaction/credit"; ?>">Cancel</a></button>
+                                            </div>
+                                         </div>
+                                    </div>
+
+                               
+                                </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+     
+   <?php 
+        }
+    ?>
+ 
+<script type="text/javascript">
+
+      var counter = <?php echo ++$j; ?>;
+    $("#credit_row").on("click", function () {
+        /* if(counter>5){
+                    alert("Only 5 shipping address allowed");
+                    return false;
+         } */   
+
+         var tax_code = '<select name="tax_code_' +counter+ '" id="tax_code_' +counter+ '"  class="form-control" required  onchange="return calculateTotal();"><option value="">Select</option>';
+
+         tax_code += '<option value="0" title="Not Applicable">NA</option>';
+
+         <?php
+            foreach ($this->taxCode as $tax) {
+                $id = $tax['id']."_".$tax['tax_percentage'];
+                $name = $tax['tax_code']." - ".$tax['tax_percentage']." %";
+                $taxdesc = ucfirst($tax['description']);
+         ?>
+           tax_code += '<option value="<?php echo $id; ?>" title="<?php echo $taxdesc; ?>"><?php echo $name; ?></option>';
+         <?php
+            }
+         ?>
+
+         tax_code += '</select>';
+
+        var product_desc = '<select name="product_description_' +counter+ '" id="product_description_' +counter+ '"  class="form-control" required  onchange="return productSelect('+counter+',this.value);"><option value="">Select</option>';
+
+         <?php
+            foreach ($this->product as $product) {
+                $id = $product['id']."_".$product['product_id']."_".$product['price'];
+                $name = $product['name']." - ".$product['description'];
+         ?>
+           product_desc += '<option value="<?php echo $id; ?>"><?php echo $name; ?></option>';
+         <?php
+            }
+         ?>
+
+         product_desc += '</select>';
+
+
+         var newTextBoxDiv = $(document.createElement('tr'))
+              .attr("id", 'TextBoxDiv' + counter);
+         // alert(expense_type);
+         newTextBoxDiv.html('<td style="width:2%;"><a href="javascript:void(0)" value="removeButton"  class="remove_product"><i class="icon-cancel-circle-2"></i></a> </td>'+
+                            '<td style="width:15%;"><input type="text" name="product_id_'+counter+'" id="product_id_'+counter+'" class="form-control" required placeholder="Enter Product ID" readonly /></td>' +
+                            '<td style="width:20%;">'+product_desc+'</td>' +
+                            '<td style="width:5%;"><input type="text" name="quantity_'+counter+'" id="quantity_'+counter+'" class="form-control" required  number="true" autocomplete="off" minlength="1" maxlength="3"  onkeyup="return calculateTotal();" /></td>' +
+                            '<td><input type="text" name="price_'+counter+'" id="price_'+counter+'" class="form-control" placeholder="Enter Price" required  readonly number="true"  onkeyup="return calculateTotal();" readonly /></td>' +
+                            '<td style="width:15%;">'+tax_code+'</td><td><strong id="net_amount_'+counter+'"></strong>&nbsp;</td></tr>');
+
+         newTextBoxDiv.appendTo("#credit_detail");
+        $("#product_counter").val(counter);
+         counter++;
+    });
+
+    $(document).on('click',".remove_product",function (){   
+        /* if(counter==1){
+            alert("No more shipping addresses to remove");
+            return false;
+        } */  
+
+        counter--;
+
+        $("#TextBoxDiv" + counter).remove();
+        $("#product_counter").val(counter-1);
+        calculateTotal();
+    });
+
+
+
+function productSelect(idValue,pid) {
+    var prod_id    = pid.split('_');
+    $("#product_id_"+idValue).val(prod_id[1]);
+    $("#price_"+idValue).val(prod_id[2]);
+    $("#quantity_"+idValue).val("");
+    $("#tax_code_"+idValue).val("");
+    calculateTotal();
+}
+
+
+
+function calculateTotal() {
+    var invoice_count   = $("#product_counter").val();
+    var sub_total  = 0.00;
+    var sub_gst  = 0.00;
+    var total_gst_amount  = 0.00;
+    var grand_total = 0.00;
+    var grand_total_sgd = 0.00;
+    for(var i = 1; i<=invoice_count;i++) {
+        var net_amount = 0.00;
+        var total_gst  = 0.00;
+        var quantity = $("#quantity_"+i).val();
+        var price    = $("#price_"+i).val();
+        var tax_code = $("#tax_code_"+i).val(); 
+        var myTax    = tax_code.split('_');
+        if(quantity!=0 && quantity!='' && price!=0 && price!='') {
+            var net_amount = (quantity * price);
+        }
+        if(myTax[0]!=0 && myTax[0]!='' && myTax[1]!=0 && myTax[1]!='') {
+            total_gst = parseFloat(myTax[1]);
+        }
+        $("#net_amount_"+i).text(parseFloat(net_amount).toFixed(2));
+        sub_total += parseFloat(net_amount);
+        sub_gst   += (parseFloat(net_amount) * parseFloat(total_gst) / 100);
+    }
+   // total_gst_amount += (parseFloat(sub_total) * parseFloat(total_gst) / 100);
+    grand_total += parseFloat(sub_total) + parseFloat(sub_gst);
+    $("#sub_total").text(parseFloat(sub_total).toFixed(2));
+    $("#total_gst").text(parseFloat(sub_gst).toFixed(2));
+    $("#grand_total").text(parseFloat(grand_total).toFixed(2));
+}
+
+</script>

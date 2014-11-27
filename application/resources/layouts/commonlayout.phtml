@@ -1,0 +1,123 @@
+<?php 
+  $front      = Zend_Controller_Front::getInstance(); 
+  //getting current module and action names
+  $action     = $front->getRequest()->getActionName();
+  $module     = $front->getRequest()->getModuleName();
+  $controller = $front->getRequest()->getControllerName();
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="<?php echo $this->escape($this->title); ?>" />
+	<meta name="keywords" content="<?php echo $this->escape($this->title); ?>" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+    <title><?php echo $this->escape($this->title); ?></title>
+
+    <?php
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'bootstrap.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'font-alpona.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'prettify.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'responsive-tables.css');
+        if($this->defaultTheme==1) {
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'styles.css');
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'component.css');
+        } else if($this->defaultTheme==2) {
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'styles-black.css');
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'component-black.css');
+        } else if($this->defaultTheme==3) {
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'styles-blue.css');
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'component-blue.css');
+        } else {
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'styles.css');
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'component.css');
+        }
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'style.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'bootstrap-reset.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'jquery-select.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'icheck-skins/all.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'datepicker.css');
+     //   $this->headLink()->appendStylesheet($this->styleSheetPath.'screen.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'jquery.treeview.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'tip-yellow.css');
+        $this->headLink()->appendStylesheet($this->styleSheetPath.'default.css');
+
+        if($module=='reports' || $controller=='journal') {
+            $this->headLink()->appendStylesheet($this->styleSheetPath.'core.css');
+        }
+        if($module=='transaction' && ($action=='view-report' || $action=='report') && $controller=='fixedassets' ) {
+			$this->headLink()->appendStylesheet($this->styleSheetPath.'report.css');			
+		}
+	      echo $this->headLink();
+	
+        $this->headScript()->appendFile($this->scriptpath.'jquery.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery-ui-1.10.3.custom.min.js');  
+        $this->headScript()->appendFile($this->scriptpath.'bootstrap.min.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery.validate.min.js');  
+        $this->headScript()->appendFile($this->scriptpath.'demo.validation.js');  
+        $this->headScript()->appendFile($this->scriptpath.'prettify.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery.nicescroll.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery.cookie.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery.hoverIntent.minified.js');
+        $this->headScript()->appendFile($this->scriptpath.'jquery.dataTables.js'); 
+        $this->headScript()->appendFile($this->scriptpath.'dataTables.bootstrap.js'); 
+        $this->headScript()->appendFile($this->scriptpath.'TableTools.js'); 
+        $this->headScript()->appendFile($this->scriptpath.'responsive-tables.js');   
+        $this->headScript()->appendFile($this->scriptpath.'jquery.bpopup.min.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery-select.js');
+        $this->headScript()->appendFile($this->scriptpath.'jquery.icheck.js'); 
+        $this->headScript()->appendFile($this->scriptpath.'bootstrap-datepicker.js');
+        $this->headScript()->appendFile($this->scriptpath.'jquery.treeview.js');
+        $this->headScript()->appendFile($this->scriptpath.'additional-methods.js');
+        $this->headScript()->appendFile($this->scriptpath.'transaction.js');
+        $this->headScript()->appendFile($this->scriptpath.'jquery.poshytip.js');
+        $this->headScript()->appendFile($this->scriptpath.'/ckeditor/ckeditor.js');
+
+        $this->headScript()->appendFile($this->scriptpath.'classie.js');
+        $this->headScript()->appendFile($this->scriptpath.'modernizr.custom.js');
+        $this->headScript()->appendFile($this->scriptpath.'uisearch.js');
+        if($module=='reports' || $action=='audit-trail' || $controller=='invoice' || $controller=='credit' || $controller=='journal' || $module=='transaction') {
+            $this->headScript()->appendFile($this->scriptpath.'jquery.PrintArea.js_4.js'); 
+            $this->headScript()->appendFile($this->scriptpath.'core.js');
+            $this->headScript()->appendFile($this->scriptpath.'jspdf.debug.js');
+        }
+
+        if($action=='dashboard') {
+            $this->headScript()->appendFile($this->scriptpath.'jsapi.js');
+        }
+       
+        /*if($module=='default' && $controller=='transactions') {
+          $this->headScript()->appendFile($this->scriptpath.'transaction.js');
+        }*/
+
+        ?>
+        <!--[if lt IE 9]>
+        <?php
+          $this->headScript()->appendFile($this->scriptpath.'respond.min.js');  
+          $this->headScript()->appendFile($this->scriptpath.'font-alpona-ie7.js');  
+        ?>
+        <![endif]-->
+        <?php
+       // $this->headScript()->appendFile($this->scriptpath.'responsive-tables.js');  
+        $this->headScript()->appendFile($this->scriptpath.'jquery.battatech.excelexport.js'); 
+        $this->headScript()->appendFile($this->scriptpath.'common-script.js');  
+	      echo $this->headScript();
+    ?>
+
+</head>
+
+<body <?php if($module=='default' && $controller=='index' && $action=='index') {?> style="background-color:#ccc;" <?php } ?>>
+<?php
+  if($module=='default' && $controller=='index' && ($action=='index')) {
+    echo $this->partial('partials/loginheader.phtml', array('action'=>$action,'module'=>$module,'controller'=>$controller));
+    echo $this->layout()->content;
+    echo $this->partial('partials/footer.phtml', array());
+  } else {
+	echo $this->partial('partials/header.phtml', array('action'=>$action,'module'=>$module,'controller'=>$controller));
+	echo $this->layout()->content;
+	echo $this->partial('partials/footer.phtml', array());
+  }
+?>
+
+</body>
+</html>

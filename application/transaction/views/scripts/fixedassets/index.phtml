@@ -1,0 +1,254 @@
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li class="active">Fixed Assets</li>
+</ul>
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            </div>
+   </div>
+   <?php
+    if(!empty($_GET['location']) && $_GET['location']) { 
+       $show_filter = 'display:none;';
+        $hide_filter = '';
+      } else {   
+         $show_filter = '';
+        $hide_filter = 'display:none;';
+        
+      }
+    $logSession = new Zend_Session_Namespace('sess_login');
+   ?>
+
+   <?php 
+        if($logSession->type!=5 && $logSession->proxy_type!=5) {
+   ?>
+   <div class="row">
+       <div class="col-md-12 grid-spacing">
+       <a href="<?php echo $this->sitePath."transaction/fixedassets/create" ?>"  title="Add Fixed Asset" class="btn btn-primary" type="button">Add Fixed Asset</a>
+        <a href="<?php echo $this->sitePath."transaction/fixedassets/report" ?>" title="Fixed Asset Reports" class="btn btn-primary" type="button">Fixed Asset Reports</a>
+       <a href="javascript:void(0)" class="btn btn-primary" id="show_filter" style="<?php echo $show_filter; ?>" type="button">Show Filters</a>
+       <a href="javascript:void(0)" class="btn btn-primary" id="hide_filter" type="button" style="<?php echo $hide_filter; ?>">Hide Filters</a>
+       </div>
+   </div>
+
+   <?php
+      }
+   ?>
+
+
+ <div class="row" id="filters_id" style="<?php echo $hide_filter; ?>">
+    <div class="col-md-12">
+
+      <form class="form-horizontal" id="filter-by" method="get" novalidate="novalidate">
+        <div class="form-group">
+
+          <label class="col-lg-5 control-label">Branch </label>
+          <div class="col-lg-3">
+               <select class="form-control" name="location" id="locations" required>
+                  <!-- <option value="all" <?php if($this->setlocation=='all') { echo "selected"; } ?>>All Branch</option> -->
+                  <?php
+                     if(isset($this->locations) && !empty($this->locations)) {
+                        foreach ($this->locations as $location) {
+                          if(isset($this->setlocation) && !empty($this->setlocation)) {
+                            if($location['id']==$this->setlocation) {
+                                 $locationSelect = 'selected';
+                              } else {
+                                 $locationSelect = '';
+                              }
+                          } else {
+                             if($location['is_default']==1) {
+                                 $locationSelect = 'selected';
+                              } else {
+                                 $locationSelect = '';
+                              }
+                          }
+                  ?>
+                        <option value="<?php echo $location['id']; ?>" <?php echo $locationSelect; ?>><?php echo ucwords($location['name']); ?></option>
+                   <?php
+                          }
+                        }
+                   ?>                                                      
+                 </select>
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label class="col-lg-5 control-label">Financial Year </label>
+          <div class="col-lg-3">
+               <select class="form-control" name="financial_year" id="financial_year" required>
+                  <option value="all" <?php if($this->setfinance=='all') { echo "selected"; } ?>>All Financial Year</option>
+                  <?php
+                     $financeSelect = '';
+                     if(isset($this->finance) && !empty($this->finance)) {
+                        foreach ($this->finance as $finance) {
+                          $start = date('d-m-Y',strtotime($finance['financial_start']));
+                          $end   = date('d-m-Y',strtotime($finance['financial_end']));
+                          if(isset($this->setfinance) && !empty($this->setfinance)) {
+                            if($finance['id']==$this->setfinance) {
+                                 $financeSelect = 'selected';
+                              } else {
+                                 $financeSelect = '';
+                              }
+                          } else {
+                             if($finance['id']==$this->checkFinance) {
+                                 $financeSelect = 'selected';
+                              } else {
+                                 $financeSelect = '';
+                              }
+                          }
+                  ?>
+                        <option value="<?php echo $finance['id']; ?>" <?php echo $financeSelect; ?>><?php echo $start." to ".$end; ?></option>
+                   <?php
+                          }
+                        }
+                   ?>                                                      
+                 </select>
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+         <label class="col-lg-5 control-label">&nbsp;</label>
+           <div class="col-lg-3">
+              <div class="form-actions">
+                <button type="submit" id="update" class="btn btn-primary">Filter</button>
+                <a class="btn btn-default" href="<?php echo $this->sitePath."transaction/fixedassets" ?>">
+                Cancel</a>
+              </div>
+           </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+ 
+ <div class="row">
+                      
+
+                        <div class="col-md-12">
+                            <div class="box-widget">
+                                <table class="table responsive" id="journal-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:10%;">
+                                                Date
+                                            </th>
+                                            <th style="display:none;">Sortable Date</th>
+                                            <th style="width:15%;">
+                                                Vendor
+                                            </th>
+                                            <th style="width:15%;">
+                                                Branch
+                                            </th>
+                                            <th style="width:15%;">
+                                                FA COA
+                                            </th>
+                                            <th style="width:15%; text-align:center;">
+                                              Purchase Price
+                                            </th>
+                                            <th style="width:10%;">
+                                                FA Life
+                                            </th>
+                                            <th style="width:10%;">
+                                                Frequency
+                                            </th>
+                                            <th style="width:10%; text-align:center;">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php 
+                                        if(isset($logSession->proxy_type) && !empty($logSession->proxy_type)) {
+                                          $user_type = $logSession->proxy_type;
+                                        } else {
+                                          $user_type = $logSession->type;
+                                        }
+                                        $i=1;
+                                        foreach($this->result as $results) {
+                                    ?>
+                                        <tr>
+
+                                        <td><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo date("d-m-Y",strtotime($results['date'])); ?></a></td>
+                                        <td style="display:none;"><?php echo date("Ymd",strtotime($results['date'])); ?></td>
+                                        <td><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo ucfirst($results['vendor_name']); ?></a></td>
+                                        <td><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo ucfirst($results['location']); ?></a></td>
+                                        <td><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo ucfirst($results['account_name']); ?></a></td>
+                                        <td style="text-align:right;"><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo number_format($results['purchase_price'],2,'.',','); ?></a></td>
+                                        <td><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo $this->faYears[$results['fa_life']]; ?></a></td>
+                                        <td><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>" style="color:#333;"><?php echo $this->faFrequency[$results['frequency']]; ?></a></td>
+                                        <td class="action-bar">
+
+
+                                  <div class="btn-group col-md-1">
+                                    <button data-toggle="dropdown" class="btn btn-small dropdown-toggle"> <span class="caret"></span></button>
+                                    <ul class="dropdown-menu" style="min-width:0px !important;">
+                                        <li><a href="<?php echo $this->sitePath."transaction/fixedassets/edit/id/".base64_encode($results['id']); ?>">View / Edit</a></li>
+                                        
+                                        <?php 
+                                            if($logSession->type!=5 && $logSession->proxy_type!=5 && $results['status']==2) {
+                                         ?>
+                                        <li><a href="" class="widget-remove" onclick="return deleteFixed('<?php echo base64_encode($results['id']); ?>')">Delete</a></li>
+                                        <?php
+                                            }
+                                        ?>
+                                    </ul>
+                                    </div>
+
+                                    
+                                                             
+                                        </td>
+                                        </tr>
+                                    <?php 
+                                        }
+                                    ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+<script type="text/javascript">
+
+
+
+function deleteFixed(Idvalue) {
+  var location = $('#locations').val();
+  var finance  = $('#financial_year').val();
+  var confirmMsg = confirm("Are you sure want to delete this fixed assets? You cannot undo this action");
+    if(confirmMsg) {
+            window.location.href='<?php echo $this->sitePath; ?>transaction/fixedassets/index/delid/'+Idvalue+'/?location='+location+'&financial_year='+finance;
+    }
+}
+
+$(document).ready(function(){
+   $('#show_filter').click(function () {
+       $('#hide_filter').css('display','inline-block');
+       $('#filters_id').css('display','block');
+       $('#show_filter').css('display','none');
+   }); 
+   $('#hide_filter').click(function () {
+       $('#show_filter').css('display','inline-block');
+        $('#filters_id').css('display','none');
+       $('#hide_filter').css('display','none');
+   }); 
+});
+</script>

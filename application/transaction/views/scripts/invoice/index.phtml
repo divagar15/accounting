@@ -1,0 +1,617 @@
+<?php
+  $logSession = new Zend_Session_Namespace('sess_login');
+
+  function convertCurrency($amount, $from){
+      $to   = 'SGD';
+      $url  = "https://www.google.com/finance/converter?a=$amount&from=$from&to=$to";
+      $data = file_get_contents($url);
+      preg_match("/<span class=bld>(.*)<\/span>/",$data, $converted);
+      $converted = preg_replace("/[^0-9.]/", "", $converted[1]);
+      return round($converted, 3);
+  }
+?>
+<div id="popup">
+<span class="button b-close"><span>X</span></span>
+<div class="row" id="add_payment">
+ <h4>Add Payment</h4>
+<div class="widget-container col-md-12 col-md-offset-1">
+ <form class="form-horizontal" id="add-payment" method="post">
+    <div class="form-group">
+      <label class="control-label col-lg-4">Payment Date <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <input type="hidden" name="invoice_id" id="invoice_id" />
+            <input type="hidden" name="currency_status" id="currency_status" />
+            <input type="text" name="date" id="date" class="form-control date-pick" placeholder="Select Date"  autocomplete="off" value="<?php echo date('d-m-Y'); ?>"/>
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Cash / Bank Account <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+             <select class="form-control" name="pay_account" id="pay_account">
+                <option value="">Select</option>
+                    <?php
+                        if(isset($this->payAccount) && !empty($this->payAccount)) {
+                            foreach ($this->payAccount as $payAccount) {
+                    ?>
+                        <option value="<?php echo $payAccount['id']; ?>"><?php echo $payAccount['account_name']; ?></option>
+                    <?php
+                            }
+                        }
+                    ?>                                                       
+              </select>
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Amount <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <input type="text" name="pay_amount" id="pay_amount" class="form-control amount-align" placeholder="Enter Amount"  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);"  />
+            <input type="hidden" name="pending_amount" id="pending_amount" class="form-control" autocomplete="off"   />
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Payment Method <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+          <select name="pay_method" id="pay_method" class="form-control">
+            <option value="">Select</option>
+           <?php 
+                foreach ($this->payMethod as $key => $pay) {
+           ?>
+                <option value="<?php echo $key; ?>"><?php echo $pay; ?></option>
+           <?php
+                }
+           ?>
+          </select>
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Bank Cheque / Draft No </label>
+        <div class="col-lg-5">
+            <input type="text" name="cheque_draft_no" id="cheque_draft_no" class="form-control" placeholder="Enter Cheque / Draft No"  autocomplete="off" />
+        </div>
+    </div>
+     <div class="form-group">
+      <label class="control-label col-lg-4">Prompt Payment Discount <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <select class="form-control" name="payment_discount" id="payment_discount" onchange="discountPayment(this.value);">
+                <option value="1">Yes</option>  
+                <option value="2" selected>No</option>  
+            </select>
+        </div>
+    </div>
+     <div class="form-group">
+      <label class="control-label col-lg-4">Discount Amount <span class="mandatory">*</span></label>
+        <div class="col-lg-5">
+            <input type="text" name="discount_payment_amount" id="discount_payment_amount" class="form-control amount-align" value="0" disabled  autocomplete="off" onchange="return numberWithCommasInput(this.value,this.id);" />
+        </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-4">Additional Description / Notes </label>
+        <div class="col-lg-5">
+        <textarea name="description" id="description" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-lg-8"><input type="checkbox" name="payment_status" id="payment_status" value="1" /> <span>Check this to confirm the full payment received</span> </label>
+        
+    </div>
+
+     <div class="form-group">
+        <div class="col-lg-8 col-lg-offset-3">
+            <div class="form-actions">
+               <input type="submit" name="add_payment" class="btn btn-primary " id="add_payment" value="Add Payment" />
+                <button type="reset" class="btn" onclick="return bPopup_close();">Cancel</button>
+            </div>
+        </div>
+     </div>
+
+</form>
+</div>
+</div>
+</div>
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li class="active">Invoice</li>
+</ul>
+   <div class="row">
+       <div class="col-md-12">
+            <p>
+              <a href="<?php echo $this->sitePath."transaction/invoice"; ?>" class="btn btn-danger border-none">Invoice</a><a href="<?php echo $this->sitePath."transaction/credit"; ?>" class="btn btn-default border-none">Credit Note</a>
+            </p>
+       </div>
+   </div>
+
+
+
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            </div>
+   </div>
+
+
+   <?php
+    if(!empty($_GET['location']) && $_GET['location']) { 
+         $show_filter = 'display:none;';
+          $hide_filter = '';
+        } else {   
+           $show_filter = '';
+          $hide_filter = 'display:none;';
+          
+        }
+    $logSession = new Zend_Session_Namespace('sess_login');
+   ?>
+   <?php 
+        if($logSession->type!=5 && $logSession->proxy_type!=5) {
+   ?>
+   <div class="row">
+       <div class="col-md-12 grid-spacing">
+       <a href="<?php echo $this->sitePath."transaction/invoice/add"; ?>" class="btn btn-primary" type="button">Add Invoice</a>
+       <a href="javascript:void(0)" class="btn btn-primary" id="show_filter" style="<?php echo $show_filter; ?>" type="button">Show Filters</a>
+       <a href="javascript:void(0)" class="btn btn-primary" id="hide_filter" type="button" style="<?php echo $hide_filter; ?>">Hide Filters</a>
+            <!-- Element to pop up -->    
+       </div>
+   </div>
+      
+   <?php 
+        }
+    ?>
+ 
+<div class="row" id="filters_id" style="<?php echo $hide_filter; ?>">
+    <div class="col-md-12">
+
+      <form class="form-horizontal" id="filter-by" method="get" novalidate="novalidate">
+        <div class="form-group">
+
+          <label class="col-lg-5 control-label">Branch </label>
+          <div class="col-lg-3">
+               <select class="form-control" name="location" id="locations" required>
+                  <!-- <option value="all" <?php if($this->setlocation=='all') { echo "selected"; } ?>>All Branch</option> -->
+                  <?php
+                     if(isset($this->locations) && !empty($this->locations)) {
+                        foreach ($this->locations as $location) {
+                          if(isset($this->setlocation) && !empty($this->setlocation)) {
+                            if($location['id']==$this->setlocation) {
+                                 $locationSelect = 'selected';
+                              } else {
+                                 $locationSelect = '';
+                              }
+                          } else {
+                             if($location['is_default']==1) {
+                                 $locationSelect = 'selected';
+                              } else {
+                                 $locationSelect = '';
+                              }
+                          }
+                  ?>
+                        <option value="<?php echo $location['id']; ?>" <?php echo $locationSelect; ?>><?php echo ucwords($location['name']); ?></option>
+                   <?php
+                          }
+                        }
+                   ?>                                                      
+                 </select>
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label class="col-lg-5 control-label">Financial Year </label>
+          <div class="col-lg-3">
+               <select class="form-control" name="financial_year" id="financial_year" required>
+                  <option value="all" <?php if($this->setfinance=='all') { echo "selected"; } ?>>All Financial Year</option>
+                  <?php
+                     $financeSelect = '';
+                     if(isset($this->finance) && !empty($this->finance)) {
+                        foreach ($this->finance as $finance) {
+                          $start = date('d-m-Y',strtotime($finance['financial_start']));
+                          $end   = date('d-m-Y',strtotime($finance['financial_end']));
+                          if(isset($this->setfinance) && !empty($this->setfinance)) {
+                            if($finance['id']==$this->setfinance) {
+                                 $financeSelect = 'selected';
+                              } else {
+                                 $financeSelect = '';
+                              }
+                          } else {
+                             if($finance['id']==$this->checkFinance) {
+                                 $financeSelect = 'selected';
+                              } else {
+                                 $financeSelect = '';
+                              }
+                          }
+                  ?>
+                        <option value="<?php echo $finance['id']; ?>" <?php echo $financeSelect; ?>><?php echo $start." to ".$end; ?></option>
+                   <?php
+                          }
+                        }
+                   ?>                                                      
+                 </select>
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+         <label class="col-lg-5 control-label">&nbsp;</label>
+           <div class="col-lg-3">
+              <div class="form-actions">
+                <button type="submit" id="update" class="btn btn-primary">Filter</button>
+                <a class="btn btn-default" href="<?php echo $this->sitePath."transaction/invoice" ?>">
+                Cancel</a>
+              </div>
+           </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+ 
+ <div class="row">
+
+                      <div class="col-md-12">
+                          <h5 style="text-align:right;">
+                            <strong>Sort By:</strong>
+                            <a href="<?php echo $this->sitePath."transaction/invoice" ?>" class="btn btn-primary" type="button"><?php if(isset($this->sort) && $this->sort=='') { ?><i class="icon-ok"><?php } ?></i> All</a>
+                            <a href="<?php echo $this->sitePath."transaction/invoice/index/sort/1" ?>" class="btn btn-primary" type="button"><?php if(isset($this->sort) && $this->sort==1) { ?><i class="icon-ok"><?php } ?></i> Verified</a>
+                             <a href="<?php echo $this->sitePath."transaction/invoice/index/sort/2" ?>" class="btn btn-primary" type="button"><?php if(isset($this->sort) && $this->sort==2) { ?><i class="icon-ok"><?php } ?></i> Unverified</a>
+                             </h5>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="box-widget">
+                                <table class="table responsive" id="invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th style="display:none;">Sortable Date</th>
+                                            <th>
+                                                Invoice No
+                                            </th>
+                                            <th>
+                                                Branch
+                                            </th>
+                                            <th>
+                                                Customer
+                                            </th>
+                                            <th style="text-align:center;">
+                                               Amount Due
+                                            </th>
+                                            <th style="text-align:center;">
+                                               Total Amount
+                                            </th>
+                                             <th>
+                                                Status
+                                            </th>
+                                            <th style="text-align:center;">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php 
+                                        if(isset($logSession->proxy_type) && !empty($logSession->proxy_type)) {
+                                          $user_type = $logSession->proxy_type;
+                                        } else {
+                                          $user_type = $logSession->type;
+                                        }
+                                        $i=1;
+                                        foreach($this->invoice as $results) {
+                                          $exp_amount = 0.00;
+                                          $pay_amount = 0.00;
+                                          $credit_amount = 0.00;
+                                          $convert_amount = 0.00;
+                                          $coa_link = $results['coa_link'];
+                                            foreach ($this->payments as $pay) {
+                                              if($pay['fkiei_id']==$results['id']) {
+                                                  $pay_amount += $pay['payment_amount']+$pay['discount_amount'];
+                                              }
+                                            }
+                                            foreach ($this->invoiceCredit as $invCre) {
+                                              if($invCre['invid']==$results['id']) {
+                                                  $totals   = $invCre['amount'] + $invCre['tax_amount'];
+                                                  $credit_amount += $totals;
+                                              }
+                                            }
+
+                                            foreach ($this->invoiceCreditExpense as $invCreExp) {
+                                              if($invCreExp['invid']==$results['id']) {
+                                                  $totals   = $invCreExp['amount'] + $invCreExp['tax_amount'];
+                                                  $credit_amount -= $totals;
+                                              }
+                                            }
+
+                                           $total_amount   = $results['amount'] + $results['tax_amount'];
+
+                                           foreach($this->invoiceExpense as $invExp) {
+                                            if($invExp['id']==$results['id']) {
+                                              $exp_amount = $invExp['amount'] + $invExp['tax_amount'];
+                                            }
+                                           }
+
+                                           $total_amount = $total_amount-$exp_amount;
+
+                                            if($results['transaction_currency']!='SGD') {
+                                               $converted_amount = $total_amount*$results['exchange_rate'];
+                                               $pay_status = 2;
+                                               if($credit_amount!=0) {
+                                                  $convert_amount = $credit_amount*$results['exchange_rate'];
+                                               }
+                                            } else {
+                                              $converted_amount = $total_amount;
+                                              $convert_amount   = $credit_amount;
+                                              $pay_status = 1;
+                                            }
+                                            $pending_amount = round($converted_amount,2) - ($pay_amount+round($convert_amount,2));
+                                    ?>
+                                        <tr>
+                                        <td style="width:10%;"><a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')"><?php echo date("d-m-Y",strtotime($results['date'])); ?></a></td>
+                                        <td style="display:none;"><?php echo date("Ymd",strtotime($results['date'])); ?></td>
+                                        <td style="width:15%;"><a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')"><?php echo $results['invoice_no']; ?></a></td>
+                                         <td style="width:15%;"><a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')"><?php echo ucwords($results['location']); ?></a></td>
+                                        <td style="width:10%;"><a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')"><?php echo ucfirst($results['customer_name']); ?></a></td>
+                                        <td style="text-align:right; width:10%; padding-right:20px;"><a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')" style="margin-right:20px;"><?php if($results['payment_status']==1) { echo "Nil"; } else { echo number_format($pending_amount,2,'.',','); } ?></a></td>
+                                        <td style="text-align:right; width:15%; padding-right:20px;"><a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')" style="margin-right:20px;"><?php echo number_format($converted_amount,2,'.',','); ?></a></td>
+                                        <td style="width:10%;">
+                                        <a href="javascript:void(0)" class="setView" onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>','<?php echo $user_type; ?>')">
+                                        <?php
+                                         if($results['invoice_status']==1) {
+                                            $status = "Approved";
+                                         } else if($results['invoice_status']==2) {
+                                            $status = "Pending Approval";
+                                         } else if($results['invoice_status']==3) {
+                                            $status = "Draft";
+                                         } 
+                                         if($results['sent_status']==1) {
+                                            $status .= " & Sent";
+                                         }
+                                         echo $status;
+                                        ?>
+                                        </a>
+                                        </td>
+                                        <td class="action-bar" style="width:10%; padding-left: 35px;">
+
+
+                                  <div class="btn-group col-md-1">
+                                    <button data-toggle="dropdown" class="btn btn-small dropdown-toggle"> <span class="caret"></span></button>
+                                    <ul class="dropdown-menu" style="min-width:0px !important;">
+                                        <li><a href="<?php echo $this->sitePath."transaction/invoice/view/id/".base64_encode($results['id']); ?>">View</a></li>
+                                         <?php 
+                                            if($logSession->type!=5 && $logSession->proxy_type!=5) {
+                                         ?>
+                                         <?php 
+                                            if($results['invoice_status']!=3) {
+                                         ?>
+                                         <li><a href="javascript:void(0)" onclick="return addPayment('<?php echo $pending_amount; ?>','<?php echo $results['id']; ?>','<?php echo $results['discount_status']; ?>','<?php echo $coa_link; ?>','<?php echo $results['payment_status']; ?>','<?php echo $pay_status; ?>')">Add Payment</a></li>
+                                         <?php
+                                            }
+                                        ?>
+                                        <li><a href="javascript:void(0)" class="<?php if($results['invoice_status']==1) { echo "disable-indication disabled"; } ?>"  onclick="return editTransaction('<?php echo base64_encode($results['id']); ?>','<?php echo $results['invoice_status']; ?>')">Edit</a></li>
+                                        <?php 
+                                            if($results['invoice_status']!=3) {
+                                         ?>
+                                        <li><a href="javascript:void(0)" onclick="return copyInvoice('<?php echo base64_encode($results['id']); ?>')">Copy</a></li>
+                                        <?php
+                                            }
+                                        ?>
+                                        <?php
+                                            }
+                                        ?>
+                                        <?php 
+                                            if($logSession->type!=5 && $logSession->proxy_type!=5) {
+                                         ?>
+                                         <?php 
+                                            if($results['invoice_status']!=3) {
+                                         ?>
+                                         <!-- <li><a href="" class="widget-remove" onclick="return markSent('<?php echo base64_encode($results['id']); ?>')">Mark as sent</a></li> -->
+                                         <?php
+                                            }
+                                        ?>
+                                        <li><a href="" class="widget-remove" onclick="return deleteInvoice('<?php echo base64_encode($results['id']); ?>')">Delete</a></li>
+                                        <?php
+                                            }
+                                        ?>
+                                    </ul>
+                                    </div>
+
+                                        <div class="col-md-2" style="margin-left:20px;">
+                                        <?php 
+                                          if(($logSession->proxy_type==2 || $logSession->type==2)) {
+                                              $authorised = 1;
+                                          } else if (($logSession->type==3 && $logSession->id==$results['approval_for']) || ($logSession->proxy_type==3 && $logSession->proxy_id==$results['approval_for'])) {
+                                             $authorised = 1;
+                                          }  else {
+                                             $authorised = 2;
+                                          }
+                                          if($results['invoice_status']==1) {
+                                        ?>
+                                          <a class="btn btn-mini btn-success" href="javascript:void(0)" data-original-title="Unverify"  onclick="changeTransactionStatus('<?php echo base64_encode($results['id']); ?>',2,'<?php echo $authorised; ?>')"><i class="icon-ok"></i></a>
+                                        <?php 
+                                          } else if($results['invoice_status']==2) {
+                                        ?>
+                                          <a class="btn btn-mini btn-default" href="javascript:void(0)" data-original-title="Verify"  onclick="changeTransactionStatus('<?php echo base64_encode($results['id']); ?>',1,'<?php echo $authorised; ?>')"><i class="icon-ok"></i></a>
+                                        <?php 
+                                          } 
+                                          if($results['invoice_status']==3) {
+                                        ?>
+                                         <a class="btn btn-mini btn-default" href="javascript:void(0)" data-original-title="Draft"><i class="icon-envelope"></i></a>
+                                        <?php 
+                                          }
+                                        ?>
+                                        </div>
+                                                             
+                                        </td>
+                                        </tr>
+                                    <?php 
+                                        }
+                                    ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+<script type="text/javascript">
+
+function editTransaction(Idvalue,status,type) {
+  if(type==5) {
+    window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/view/id/'+Idvalue;
+    //alert("Cannot edit this invoice because transaction is verified");
+  } else if(status==1) {
+    window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/view/id/'+Idvalue;
+    //alert("Cannot edit this invoice because transaction is verified");
+  } else {
+    window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/edit/id/'+Idvalue;
+  }
+}
+
+ function numberWithCommas(x,action) {
+  if(action=='normal') {
+    var x = parseFloat(x).toFixed(2);
+    var value = x.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+    return value;
+  } else if(action=='format')  {
+    var value  = x.replace(/\,/g,''); 
+    return value;
+  }
+}
+
+
+ function numberWithCommasInput(x,id) {
+    var amount = parseFloat(x).toFixed(2);
+    var value  = amount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+    $("#"+id).val(value);
+}
+
+function numberWithOutCommasInput(x) {
+  x=x.replace(/\,/g,''); 
+  var value = parseFloat(x).toFixed(2);
+  return value;
+}
+
+
+function changeTransactionStatus(Idvalue,status,auth) {
+  var location = $('#locations').val();
+  var finance  = $('#financial_year').val();
+  if(auth==1) {
+    window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/index/verifyid/'+Idvalue+'/status/'+status+'/?location='+location+'&financial_year='+finance;
+    } else if(auth==2) {
+        if(status==1) {
+          alert('You are not authorized to verify this transaction');
+        } else if(status==2) {
+          alert('You are not authorized to unverify this transaction');
+        }
+    }
+}
+
+function copyInvoice(Idvalue) {
+  var confirmMsg = confirm("Are you sure want to copy this invoice? ");
+    if(confirmMsg) {
+            window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/copy/id/'+Idvalue;
+    }
+}
+ 
+function markSent(Idvalue) {
+  var confirmMsg = confirm("Are you sure want to mark this invoice as sent?");
+    if(confirmMsg) {
+            window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/index/sentid/'+Idvalue;
+    }
+}
+
+function deleteInvoice(Idvalue) {
+  var location = $('#locations').val();
+  var finance  = $('#financial_year').val();
+  var confirmMsg = confirm("Are you sure want to delete this invoice? You cannot undo this action");
+    if(confirmMsg) {
+            window.location.href='<?php echo $this->sitePath; ?>transaction/invoice/index/delid/'+Idvalue+'/?location='+location+'&financial_year='+finance;
+    }
+}
+
+function discountPayment(value) {
+    if(value==1) {
+        $("#discount_payment_amount").removeAttr("disabled");
+    } else if(value==2) {
+        $("#discount_payment_amount").val("0");
+        $("#discount_payment_amount").attr("disabled","true");
+    }
+}
+
+function addPayment(pendingAmount,Idvalue,discountStatus,coa_link,status,pstatus) {
+  if(pendingAmount<=0 || status==1) {
+      alert("Full payment has been received for this invoice");
+      return false;
+  } else {
+    $('form').each(function(){
+        this.reset();
+    });
+    var custAccount = coa_link;
+    //console.log($.inArray("2",custAccount));
+    var payaccount = '';
+    /*payaccount +='<optgroup label="Cash and Cash Equivalents">';*/
+    <?php
+      $opt1 = 0;
+      $opt2 = 0;
+      foreach ($this->cashAccount as $cash) {
+        $pays = $cash['id']."_".$cash['level2']."_".$cash['account_type'];
+    ?>
+        payaccount +='<option value=<?php echo $cash['id']; ?>><?php echo ucfirst($cash['account_name']); ?></option>';
+    <?php
+      }
+    ?>
+            payaccount +='</optgroup>';
+ 
+    $("#pay_account").html(payaccount);
+    $("#invoice_id").val(Idvalue);
+    $("#currency_status").val(pstatus);
+    $("#pay_amount").val(numberWithCommas(pendingAmount,'normal'));
+    $("#pending_amount").val(pendingAmount);
+    if(discountStatus==1) {
+      $("select#payment_discount option[value='1']").attr("selected","selected"); 
+      $("#discount_amount").removeAttr("disabled");
+    } else if(discountStatus==2) {
+      $("select#payment_discount option[value='2']").attr("selected","selected"); 
+      $("#discount_amount").val("0");
+      $("#discount_amount").attr("disabled","true");
+    }
+    $('#popup').bPopup({
+            modalClose: false,
+            easing: 'easeOutBack', 
+            speed: 1000,
+            transition: 'slideDown',
+            follow: [false, false], 
+    });
+  }
+}
+
+ function bPopup_close() {
+     $("#popup").bPopup().close();
+ }
+ $(document).ready(function(){
+   $('#show_filter').click(function () {
+       $('#hide_filter').css('display','inline-block');
+       $('#filters_id').css('display','block');
+       $('#show_filter').css('display','none');
+   }); 
+   $('#hide_filter').click(function () {
+       $('#show_filter').css('display','inline-block');
+        $('#filters_id').css('display','none');
+       $('#hide_filter').css('display','none');
+   }); 
+});
+</script>

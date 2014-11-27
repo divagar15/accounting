@@ -1,0 +1,357 @@
+<style>
+</style>
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li><a href="<?php echo $this->sitePath."transaction/fixedassets/"; ?>">Fixed Assets</a></li>
+   <li class="active">Reports</li>
+</ul>
+<?php
+   $logSession = new Zend_Session_Namespace('sess_login');
+    if(isset($this->fromDate) && !empty($this->fromDate)) { $fromdate = $this->fromDate; } else {  $fromdate = date('d-m-Y'); }
+	if(isset($this->toDate) && !empty($this->toDate)) {  $todate = $this->toDate; } else {  $todate = date('d-m-Y'); }
+	if(isset($this->branchCode) && !empty($this->branchCode)) { $branch = $this->branchCode; } else { $branch = ''; }
+   ?>
+<div class="row">
+   <div class="col-md-12">
+      <form class="form-horizontal" id="filter-by" method="post" novalidate="novalidate">
+         <div class="form-group">
+            <label class="col-lg-5 control-label">From </label>
+            <div class="col-lg-3">
+               <input type="text" name="fromdate" id="fromdate" class="form-control date-pick" placeholder="Select Date" value="<?php echo $fromdate; ?>" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-lg-5 control-label">To</label>
+            <div class="col-lg-3">
+               <input type="text" name="todate" id="todate" class="form-control date-pick" placeholder="Select Date" value="<?php echo $todate; ?>" autocomplete="off"/>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-lg-5 control-label">Branch </label>
+            <div class="col-lg-3">
+                <select class="form-control" name="location" id="location" required>
+                	<option value="">All Branches</option>
+                  <?php
+                     if(isset($this->locations) && !empty($this->locations)) {
+                        foreach ($this->locations as $location) {
+                            if($location['id']==$this->branchCode) {
+                                 $locationSelect = 'selected';
+                              } else {
+                                 $locationSelect = '';
+                              }
+
+
+                  ?>
+                        <option value="<?php echo $location['id']; ?>" <?php echo $locationSelect; ?>><?php echo ucwords($location['name']); ?></option>
+                   <?php
+                          }
+                        }
+                   ?>                                                      
+                 </select>
+            </div>
+         </div>
+         <div class="form-group">
+         <label class="col-lg-5 control-label">&nbsp;</label>
+           <div class="col-lg-3">
+              <div class="form-actions">
+                <button type="submit" id="update" class="btn btn-primary">Submit</button>
+                <a class="btn btn-default" href="<?php echo $this->sitePath."transaction/fixedassets/report" ?>">
+                Reset</a>
+              </div>
+           </div>
+        </div>
+      </form>
+   </div>
+   <div class="row">
+      <div class="col-md-2 pull-right" style="padding-bottom: 17px;">
+          <button class="print btn btn-inverse" type="button" rel="reports-content"><i class="icon-print"></i> Print</button>
+          <button class="btn btn-inverse" type="button"  onclick="tableToExcel('reports-content', 'Account Receivables')"><i class="icon-file-excel"></i> Excel</button>
+      </div>
+    </div>
+
+</div>
+<div class="row">
+   <div class="col-md-12">
+      <div class="box-widget" id="reports-content">
+         <table id="main-table" width="100%">
+        	<thead>
+            	<tr>
+                	<th style="text-align:center">Fixed Assets</th>
+                    <th width="65" style="text-align:center">Life</th>
+                    <th>
+                    	<table>
+                        	<tr>
+                            	<th colspan="3" style="text-align:center">As on <?php echo $this->prevDate; ?></th>
+                            </tr>                            
+                            <tr class="leftborder" height="45">
+                                <td width="80" style="text-align:center">Book value</td>
+                                <td width="80" style="text-align:center">Acc. Depn</td>
+                                <td width="80" style="text-align:center">NBV</td>
+                            </tr>
+                             
+                        </table>
+                    </th>
+                    <th>
+                    	<table>
+                        	<tr>
+                            	<th colspan="4" style="text-align:center"><?php echo $this->fromDate; ?> to <?php echo $this->toDate; ?></th>
+                            </tr>
+                            <tr class="twoborder">
+                                <td colspan="2" style="text-align:center">Book value</td>
+                                <td colspan="2" style="text-align:center">Depreciation</td>
+                            </tr>
+                            <tr class="leftborder">
+                            	<td width="80" style="text-align:center">Additions</td>
+                                <td width="80" style="text-align:center">Disposals</td>
+                                <td width="80" style="text-align:center">Additions</td>
+                                <td width="80" style="text-align:center">Disposals</td>
+                            </tr>
+                        </table>
+                    </th>
+                    <th>
+                    	<table>
+                        	<tr>
+                            	<th colspan="3" style="text-align:center">As at <?php echo $this->toDate; ?></th>
+                            </tr>
+                            <tr class="leftborder" height="45">
+                                <td width="80" style="text-align:center">Book value</td>
+                                <td width="80" style="text-align:center">Acc. Depn</td>
+                                <td width="80" style="text-align:center">NBV</td>
+                            </tr>
+                        </table>
+                    </th>
+                </tr>
+            </thead>
+            
+            <tbody>
+            	<?php $i = 0; foreach($this->allReports as $allReport) { $tr_class= ($i % 2 == 0)?'':'#dbe5f1'; ?>
+            	<tr bgcolor="<?php echo $tr_class;?>">
+                	<td style="text-align:center"><a href="<?php echo $this->sitePath."transaction/fixedassets/view-report/id/".$allReport['id']."/fromdate/".$fromdate."/todate/".$todate."/branch/".$branch.""; ?>" title="<?php echo $allReport['name']; ?>"><?php echo $allReport['name']; ?></a></td>
+                    <td style="text-align:center"><?php echo $allReport['life']; echo ($allReport['life'] >1)?' Years':' Year'; ?></td>
+                    <td>
+                    	<table>
+                        	<tr>
+                            	<td id="before_book_<?php echo $i;?>" width="80" style="text-align:center"><?php echo ($allReport['purchase_price_before'])?(number_format($allReport['purchase_price_before'],2,'.',',')):'--'; ?></td>
+                                <td  id="before_depn_<?php echo $i;?>" width="80" style="text-align:center"><?php echo ($allReport['disposal_amount_before'])?(number_format($allReport['disposal_amount_before'],2,'.',',')) :'--'; ?></td>
+                                <td  id="before_nbv_<?php echo $i;?>" width="80" style="text-align:center">
+									<?php 
+                                        $nbv_before = ($allReport['purchase_price_before'] - $allReport['disposal_amount_before']);
+                     					echo ($nbv_before)?(number_format($nbv_before,2,'.',',')) :'--';
+					 				?>
+                                 </td>
+                            </tr>
+                        </table>
+                    </td>
+                     <td>
+                    	<table>
+                        	<tr>
+                            	<td id="between_book_add_<?php echo $i;?>" width="80" style="text-align:center"><?php echo ($allReport['purchase_price_between'])?(number_format($allReport['purchase_price_between'],2,'.',',')):'--'; ?></td>
+                               	<td id="between_book_disposal_<?php echo $i;?>" width="80" style="text-align:center"><?php echo ($allReport['purchase_price_between1'])?(number_format($allReport['purchase_price_between1'],2,'.',',')):'--'; ?></td>
+                              	<td id="between_book_dep_add_<?php echo $i;?>" width="80" style="text-align:center"><?php echo ($allReport['purchase_price_between_depreciation'])?(number_format($allReport['purchase_price_between_depreciation'],2,'.',',')):'--'; ?></td>
+                                <td id="between_book_disposal_<?php echo $i;?>" width="80" style="text-align:center"><?php echo ($allReport['purchase_price_between_depreciation_disposal'])?(number_format($allReport['purchase_price_between_depreciation_disposal'],2,'.',',')):'--'; ?></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                    	<table>
+                        	<tr>
+                            	<td  id="after_book_<?php echo $i;?>" width="84" style="text-align:center"><?php echo ($allReport['purchase_price_after'])?(number_format($allReport['purchase_price_after'],2,'.',',')):'--'; ?></td>
+                                <td  id="after_depn_<?php echo $i;?>" width="84" style="text-align:center"><?php echo ($allReport['disposal_amount_after'])?(number_format($allReport['disposal_amount_after'],2,'.',',')):'--'; ?></td>
+                                <td  id="after_nbv_<?php echo $i;?>" width="80" style="text-align:center">
+									<?php 
+                                        $nbv_before = ($allReport['purchase_price_after'] - $allReport['disposal_amount_after']);
+                     					echo ($nbv_before)?(number_format($nbv_before,2,'.',',')) :'--';
+					 				?>
+                                 </td>
+                            </tr>
+                        </table>
+                    </td>                    
+                </tr>
+              <?php  $i++; } ?>
+            </tbody>            
+        </table>
+        <table border="0" id="sub-table">
+        	<tr>
+            	<td width="136px;"></td>
+                <td width="56px;">Total</td>
+                <td style="text-align:center" width="102px;"><span id="total_before_book"></span></td>
+                <td style="text-align:center" width="102px;"><span id="total_before_depn"></span></td>
+                <td style="text-align:center" width="102px;"><span id="total_before_nbv"></span></td>
+                 <td style="text-align:center" width="102px;"><span id="total_between_book_add"></span></td>
+                <td style="text-align:center" width="102px;"> <span id="total_between_book_disposal"></span></td>
+                 <td style="text-align:center" width="102px;"><span id="total_between_depr_add"></span></td>
+                <td style="text-align:center" width="102px;"> <span id="total_between_depr_disposal"></span></td>
+                 <td style="text-align:center" width="102px;"> <span id="total_after_book"></span></td>
+                <td style="text-align:center" width="102px;"> <span id="total_after_depn"></span></td>
+                <td style="text-align:center" width="102px;"><span id="total_after_nbv"></span></td>
+            </tr>
+        </table>
+       
+        <input id="totalCount" value="<?php echo count($this->allReports); ?>" type="hidden" />
+      </div>
+      
+   </div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var totalCount = $('#totalCount').val();
+		var sum1 = 0;
+		var sum2 = 0;
+		var sum3 = 0;
+		var sum4 = 0;
+		var sum5 = 0;
+		var sum6 = 0;
+		var sum7 = 0;
+		var sum8 = 0;
+		var sum9 = 0;
+		 if(totalCount) {			
+			 	for(var i = 0; i<totalCount; i++) {
+					var a= $('#before_book_'+i).html();
+					a = a.replace(',', ''); 
+					if(a != "--") { 
+						sum1 += parseFloat(a);
+					}
+				} 
+				for(var j = 0; j<totalCount; j++) {
+					var b= $('#before_depn_'+j).html();
+					b = b.replace(',', ''); 
+					if(b != "--") { 
+						sum2 += parseFloat(b);
+					}
+				} 
+				for(var k = 0; k<totalCount; k++) {
+					var c= $.trim($('#before_nbv_'+k).html()); 
+					c = c.replace(',', '');  
+					if(c != "--") { 
+						sum3 += parseFloat(c);
+					} 
+				}  
+				for(var l = 0; l<totalCount; l++) {
+					var d= $('#between_book_add_'+l).html();
+					d = d.replace(',', ''); 
+					if(d != "--") { 
+						sum4 += parseFloat(d);
+					}
+				} 
+				for(var m = 0; m<totalCount; m++) {
+					var e= $('#between_book_disposal_'+m).html();
+					e = e.replace(',', ''); 
+					if(e != "--") { 
+						sum5 += parseFloat(e);
+					}
+				} 
+				for(var o = 0; o<totalCount; o++) {
+					var f= $('#after_book_'+o).html();
+					f = f.replace(',', ''); 
+					if(f != "--") { 
+						sum6 += parseFloat(f);
+					}
+				} 
+				for(var n = 0; n<totalCount; n++) {
+					var g= $('#after_depn_'+n).html();
+					g = g.replace(',', ''); 
+					if(g != "--") { 
+						sum7 += parseFloat(g);
+					}
+				} 
+				for(var p = 0; p<totalCount; p++) {
+					var h= $.trim($('#after_nbv_'+p).html()); 
+					h = h.replace(',', ''); 
+					if(h != "--") { 
+						sum8 += parseFloat(h);
+					}
+				} 
+				for(var q = 0; q<totalCount; q++) {
+					var lm= $.trim($('#between_book_dep_add_'+q).html()); 
+					lm = lm.replace(',', ''); 
+					if(lm != "--") { 
+						sum9 += parseFloat(lm);
+					}
+				} 
+		 } 
+		 if(addCommas(sum1.toFixed(2)) == '0.00') {
+			$('#total_before_book').html('--'); 
+		 } else {
+			$('#total_before_book').html(addCommas(sum1.toFixed(2))); 
+		 }
+		 if(addCommas(sum2.toFixed(2)) == '0.00'){
+			$('#total_before_depn').html('--'); 
+		 } else {
+			$('#total_before_depn').html(addCommas(sum2.toFixed(2))); 
+		 }
+		 if(addCommas(sum3.toFixed(2)) == '0.00') {
+			$('#total_before_nbv').html('--'); 
+		 } else {
+			$('#total_before_nbv').html(addCommas(sum3.toFixed(2))); 
+		 } 
+		if(addCommas(sum4.toFixed(2)) == '0.00') {
+			$('#total_between_book_add').html('--'); 
+		} else {
+			$('#total_between_book_add').html(addCommas(sum4.toFixed(2))); 
+		}
+		if(addCommas(sum9.toFixed(2)) == '0.00') {
+			$('#total_between_depr_add').html('--'); 
+		} else {
+			$('#total_between_depr_add').html(addCommas(sum9.toFixed(2))); 
+		}
+		if(addCommas(sum5.toFixed(2)) == '0.00') {
+			$('#total_between_book_disposal').html('--'); 
+		} else {
+			$('#total_between_book_disposal').html(addCommas(sum5.toFixed(2))); 
+		}
+		if(addCommas(sum5.toFixed(2)) == '0.00') {
+			$('#total_between_depr_disposal').html('--'); 
+		} else {
+			$('#total_between_depr_disposal').html(addCommas(sum5.toFixed(2))); 
+		}	
+		if(addCommas(sum6.toFixed(2)) == '0.00') {
+			$('#total_after_book').html('--'); 
+		} else {
+			$('#total_after_book').html(addCommas(sum6.toFixed(2))); 
+		}
+		if(addCommas(sum7.toFixed(2)) == '0.00') {
+			$('#total_after_depn').html('--'); 
+		} else {
+			$('#total_after_depn').html(addCommas(sum7.toFixed(2))); 
+		}
+		if(addCommas(sum8.toFixed(2)) == '0.00') {
+			$('#total_after_nbv').html('--'); 
+		} else {
+			$('#total_after_nbv').html(addCommas(sum8.toFixed(2))); 
+		}
+	});
+	function addCommas(nStr)
+	{
+		nStr += '';
+		x = nStr.split('.');
+		x1 = x[0];
+		x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		}
+		return x1 + x2;
+	}
+	
+	(function ($) {
+	  var rules = document.styleSheets[document.styleSheets.length-1].cssRules;
+	  for (var idx = 0, len = rules.length; idx < len; idx++) {
+		$(rules[idx].selectorText).each(function (i, elem) {
+		  elem.style.cssText += rules[idx].style.cssText;
+		});
+	  }
+	  $('style').remove();
+	})(jQuery);
+	
+	var tableToExcel = (function() {
+	  var uri = 'data:application/vnd.ms-excel;base64,'
+		, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+		, base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+		, format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+	  return function(table, name) {
+		if (!table.nodeType) table = document.getElementById(table)
+		var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+		window.location.href = uri + base64(format(template, ctx))
+	  }
+	})()
+</script>

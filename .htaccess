@@ -1,0 +1,11 @@
+# Rewrite rules for Zend Framework
+RewriteBase /~ummadc/demo/accounting/
+RewriteEngine on
+
+#Changing redirection to 301 for Google
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^(.*)$ http://%{HTTP_HOST}/index [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteRule .* index.php
+RewriteRule !\.(js|ico|gif|jpg|png|css|htc)$ index.php

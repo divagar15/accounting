@@ -1,0 +1,565 @@
+<ul class="breadcrumb">
+   <li><a href="<?php echo $this->sitePath."default"; ?>"><i class="icon-home"></i></a></li>
+   <li><a href="<?php echo $this->sitePath."transaction/journal/"; ?>">Journal Entry</a></li>
+   <li class="active">Add</li>
+</ul>
+<div class="row">
+           <div class="col-md-4 col-md-offset-4">
+           <?php 
+                if(isset($this->success) && !empty($this->success)) {
+           ?>
+                <div class="alert alert-success">
+                   <strong><?php echo $this->success; ?></strong>
+                </div>
+            <?php
+                } else if(isset($this->error) && !empty($this->error)) {
+            ?>
+                <div class="alert alert-danger">
+                   <strong><?php echo $this->error; ?></strong>
+                </div>
+            <?php 
+                }
+            ?>
+            <div class="alert alert-success" id="success" style="display:none;">
+            </div>
+            <div class="alert alert-danger" id="failure" style="display:none;">
+            </div>
+            </div>
+   </div>
+   <?php
+    $logSession = new Zend_Session_Namespace('sess_login');
+   ?>
+   <?php 
+       if($logSession->type!=5 && $logSession->proxy_type!=5) {
+   ?>
+ 
+     <div class="row">
+
+
+                        <div class="col-md-12 widget-module">
+
+                            <div class="square-widget widget-collapsible">
+                                <div class="widget-head clearfix">
+                                    <h4 class="pull-left"><i class="icon-paragraph-justify-2"></i> New Journal Entry</h4>
+                                </div>
+
+                                <div class="widget-container col-md-12">
+                                <form class="form-horizontal" id="add-journal" method="post" enctype="multipart/form-data">
+                                        <div class="form-group">
+
+                                             <div class="col-lg-2">
+                                             <label>Branch <span class="mandatory">*</span></label>
+                                                <select class="select2" name="location" id="location" required>
+                                                <!-- <option value="">Select</option> -->  
+                                                     <?php
+                                                        if(isset($this->location) && !empty($this->location)) {
+                                                            foreach ($this->location as $location) {
+                                                              if($location['is_default']==1) {
+                                                                $locationSelect = 'selected';
+                                                              } else {
+                                                                $locationSelect = '';
+                                                              }
+                                                    ?>
+                                                        <option value="<?php echo $location['id']; ?>" <?php echo $locationSelect; ?>><?php echo ucwords($location['name']); ?></option>
+                                                    <?php
+                                                            }
+                                                        }
+                                                    ?>                                                      
+                                                </select>
+                                            </div> 
+
+                                            <div class="col-lg-2">
+                                              <label>Date <span class="mandatory">*</span></label>
+                                                <input type="text" name="date" id="date" class="form-control date-pick" placeholder="Select Date" value="<?php echo date('d-m-Y'); ?>" autocomplete="off" />
+                                            </div>
+                                             
+                                             <div class="col-lg-2">
+                                              <label>Description <span class="mandatory">*</span></label><br/>
+                                                <textarea name="description" id="description" class="form-control description"></textarea>
+                                            </div>
+
+                                        </div>
+
+                                         <div class="form-group">
+
+                                         <div class="col-lg-2">
+                                              <label> <input type="checkbox" name="auto_reversal" id="auto_reversal" value="1" /> Auto Reversal Date <span class="mandatory">*</span></label>
+                                                <input type="text" name="reversal_date" id="reversal_date" class="form-control date-pick" placeholder="Select Auto Reversal Date" autocomplete="off" required disabled />
+                                            </div>
+
+                                         </div>
+
+
+                        <div class="col-md-12">
+                            <div class="square-widget">
+                                
+                                <div class="widget-container">
+                                    <table class="table responsive">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>
+                                                    Account Type <a href="javascript:void(0)" title="Refresh List" data-title="Refresh List" target="_blank" onclick="return refreshAccountList();" class="account-refresh" style="margin-left:0px;"><i class="icon-refresh"></i></a>
+                                                </th>
+                                                <th>
+                                                    Description
+                                                </th>
+                                                <th>
+                                                    Debit
+                                                </th>
+                                                <th>
+                                                    Credit
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="journal_detail">
+                                            <tr>
+                                            <td style="width:2%;"></td>
+                                                <td style="width:20%;">
+                                                <div id="accountRefresh1">
+                                                    <select class="form-control" name="account_type_1" id="account_type_1" required>
+                                                        <option value="">Select</option>
+                                                            <?php
+                                                                if(isset($this->payAccount) && !empty($this->payAccount)) {
+                                                                    foreach ($this->payAccount as $payAccount) {
+                                                            ?>
+                                                                <option value="<?php echo $payAccount['id']; ?>"><?php echo ucfirst($payAccount['account_name']); ?></option>
+                                                            <?php
+                                                                    }
+                                                                }
+                                                            ?>                                                       
+                                                      </select>
+                                                 </div>
+                                                 <?php 
+                                                    if($logSession->type!= 5) {
+                                                 ?>
+                                                    <a href="<?php echo $this->sitePath."settings/account"; ?>" title="Click to add new account" data-title="Click to add new account" target="_blank" class="add-account"><i class="icon-plus-circle-2"></i> Add New Account</a>  &nbsp; 
+                                                <?php
+                                                    }
+                                                ?>
+                                                </td>
+                                                <td style="width:40%;">
+                                                    <input type="text" name="journal_description_1" id="journal_description_1" class="form-control" required autocomplete="off" />
+                                                </td>
+                                                <td style="width:20%;">
+                                                    <input type="text" name="debit_1" id="debit_1" class="form-control amount-align" required number="true" onkeyup="return calculateTotal();" onchange="numberWithCommasInput(this.value,this.id)" onfocus="numberWithCommasInput(this.value,this.id)" autocomplete="off" value="0.00" />
+                                                </td>
+                                                <td style="width:20%;">
+                                                    <input type="text" name="credit_1" id="credit_1" class="form-control amount-align"  required number="true" onkeyup="return calculateTotal();"  onchange="numberWithCommasInput(this.value,this.id)" onfocus="numberWithCommasInput(this.value,this.id)" autocomplete="off" value="0.00" />
+                                                </td>
+                                                
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="form-group">
+                            <div class="col-lg-12 col-md-offset-5">
+                                <input type="hidden" name="hidden_debit" id="hidden_debit" />
+                                <input type="hidden" name="hidden_credit" id="hidden_credit" />
+                                 <div class="col-lg-2 col-md-offset-1">
+                                   <label class="col-lg-4 control-label" style="padding-top:0px;">Total :</label>
+                                 </div>
+                                 <div class="col-lg-2">
+                                   <label class="col-lg-4 control-label" id="total_debit" style="padding-top:0px;"></label>
+                                 </div>
+                                 <div class="col-lg-2">
+                                   <label class="col-lg-4 control-label" id="total_credit" style="padding-top:0px;"></label>
+                                 </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-3">
+                                <input type="hidden" name="journal_counter" id="journal_counter" value="1" />
+                                <a href="javascript:void(0)" id="journal_row" class="btn btn-primary green" type="button">Add Row</a>
+                            </div>
+                        </div>
+                                                <br/>
+
+                    <div class="form-group">
+                     <div class="col-lg-3">
+                     <label>Attach Invoice or Receipt </label><br/>
+                        <!-- <input type="file" name="file" id="file" class="btn" /> -->
+                        <input type="button" class="btn btn-info" value="Choose File" id="file" name="file">
+                     </div>
+                      <div class="col-lg-3 attach_file" style="display:none;">
+                       <label>Attached File : </label> <br/>
+                       <input type="hidden" name="attached_file" id="attached_file" />
+                         <div class="view_remove_file" style="display:none;">
+                          
+                         </div>
+                     </div>
+
+                    </div>
+
+                  <div class="row">
+                  <div class="col-lg-2">
+                    <div class="progress progress-striped active" id="progress-bar" style="display:none;">
+                        <div style="width: 100%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="10" role="progressbar" class="progress-bar progress-bar-success">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                  </div>
+                  </div>
+
+                             <div class="form-group">
+                                    <div class="col-lg-1">
+                                         <div class="form-actions">
+                                            <input type="hidden" name="action" id="action" value="save_draft_journal" />
+                                            <input type="button" name="save_draft_journal" class="btn btn-primary" id="save_draft_journal" value="Save as Draft" onclick="return saveDraft();" /><br/>
+                                            <i>Save Draft Journal Entries</i>
+                                          </div>
+                                      </div>
+                                      <div class="col-lg-3" style="margin-left:10px;">
+                                        <div class="form-actions">
+                                            <select class="form-control" name="approval_for" id="approval_for">
+                                            <option value="">For Approval</option>
+                                                        <?php
+                                                            if(isset($this->approveUser) && !empty($this->approveUser)) {
+                                                                foreach ($this->approveUser as $approve) {
+                                                                  if($approve['account_type']==2) {
+                                                                     $account_type = "Super User";
+                                                                  } else if($approve['account_type']==3) {
+                                                                     $account_type = "Manager";
+                                                                  }
+                                                                  if($approve['account_type']==3 && ($approve['id']==$logSession->id || $approve['id']==$logSession->proxy_id)) {
+                                                                     } else {
+                                                        ?>
+                                                            <option value="<?php echo $approve['id']; ?>" ><?php echo $approve['username']." - ".$account_type; ?></option>
+                                                        <?php
+                                                                  }
+                                                                }
+                                                            }
+                                                        ?>                                                      
+                                                    </select>
+                                          </div>
+                                          
+                                      </div>
+                                       <div class="col-lg-1" style="margin-left:10px;">
+                                         <div class="form-actions">
+                                            <input type="submit" name="unapprove_save" class="btn btn-primary add_approve_journal_transaction" id="unapprove_save" value="For Approval" /><br/>
+                                            <i>Save Journal Entries for approval</i>
+                                          </div>
+                                      </div>
+                                      <?php 
+                                              if($logSession->type!=4 && $logSession->type!=5 && $logSession->proxy_type!=4 && $logSession->proxy_type!=5) {
+                                      ?>
+                                       <div class="col-lg-1" style="margin-left:10px;">
+                                         <div class="form-actions">
+                                            <input type="submit" name="approve_journal" class="btn btn-primary add_journal_transaction" id="approve_journal" value="Approve" /><br/>
+                                            <i>Approve Journal Entries for account posting</i>
+                                            </div>
+                                         </div>
+                                       <?php
+                                                }
+                                        ?>
+                                         <div class="col-lg-1" style="margin-left:0px;">
+                                         <div class="form-actions">
+                                         <a href="<?php echo $this->sitePath."transaction/journal"; ?>">
+                                            <button type="button" class="btn">Cancel</button>
+                                         </a>
+                                            </div>
+                                         </div>
+                                    </div>
+
+                               
+
+                                </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+     
+   <?php 
+        }
+    ?>
+<script type="text/javascript" src="<?php echo $this->scriptpath.'SimpleAjaxUploader.min.js'; ?>"></script>
+<script type="text/javascript">
+
+
+  var accountJson;
+
+  $(document).ready(function(){
+    $(".amount-align").on('keydown', function (e) { 
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                 // Allow: Ctrl+A
+                (e.keyCode == 65 && e.ctrlKey === true) || 
+                 // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                     // let it happen, don't do anything
+                     return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+     $.ajax({
+        type: "POST",
+        url: "<?php echo $this->sitePath.'transaction/journal/ajax-refresh'; ?>",
+        data: 'action=accountRefresh',
+        success: function (html) {
+            accountJson = $.parseJSON(html);
+          //  console.log(accountJson);
+        }
+      }); 
+  });
+
+      var counter = 2;
+    $("#journal_row").on("click", function () {
+        /* if(counter>5){
+                    alert("Only 5 shipping address allowed");
+                    return false;
+         } */   
+
+        var account_type = '<div id="accountRefresh'+counter+'"><select name="account_type_'+counter+'" id="account_type_'+counter+'"  class="form-control" required><option value="">Select</option>';
+
+         <?php
+/*            foreach ($this->payAccount as $payAccount) {
+                $id   = $payAccount['id'];
+                $name = $payAccount['account_name'];*/
+        ?>
+
+
+         $.each(accountJson, function(){
+            account_type += '<option value="'+this.id+'">'+this.account_name+'</option>';
+         
+         });
+         <?php
+    //       }
+         ?>
+         account_type += '</select></div>';
+
+
+
+
+         var newTextBoxDiv = $(document.createElement('tr'))
+              .attr("id", 'TextBoxDiv' + counter);
+         // alert(expense_type);
+         newTextBoxDiv.html('<td style="width:2%;"><a href="javascript:void(0)" value="removeButton"  class="remove_product"><i class="icon-cancel-circle-2"></i></a> </td>'+
+                            '<td style="width:20%;">'+ account_type +'<a href="<?php echo $this->sitePath."settings/account"; ?>" title="Click to add new account" data-title="Click to add new account" target="_blank" class="add-account" onclick="accountRefresh();"><i class="icon-plus-circle-2"></i> Add New Account</a></td>' +
+                            '<td style="width:40%;"><input type="text" name="journal_description_'+counter+'" id="journal_description_'+counter+'" class="form-control" required autocomplete="off" /></td>' +
+                            '<td style="width:20%;"><input type="text" name="debit_'+counter+'" id="debit_'+counter+'" class="form-control amount-align" required number="true" onkeyup="return calculateTotal();" onchange="numberWithCommasInput(this.value,this.id)" onfocus="numberWithCommasInput(this.value,this.id)" autocomplete="off" value="0.00" /></td>' +
+                            '<td><input type="text" name="credit_'+counter+'" id="credit_'+counter+'" class="form-control amount-align"  required number="true" onkeyup="return calculateTotal();" onfocus="numberWithCommasInput(this.value,this.id)" onchange="numberWithCommasInput(this.value,this.id)" autocomplete="off" value="0.00" /></td></tr>');
+
+         newTextBoxDiv.appendTo("#journal_detail");
+        $("#journal_counter").val(counter);
+         counter++;
+    });
+
+    $(document).on('click',".remove_product",function (){   
+        /* if(counter==1){
+            alert("No more shipping addresses to remove");
+            return false;
+        } */  
+
+        counter--;
+
+        $("#TextBoxDiv" + counter).remove();
+        $("#journal_counter").val(counter-1);
+        calculateTotal();
+    });
+
+$('#auto_reversal').click(function(){
+      if($("#auto_reversal").is(':checked')) {
+        $('#reversal_date').removeAttr('disabled');
+      } else {
+        $('#reversal_date').attr('disabled','disabled');
+      }
+});
+
+
+
+function calculateTotal() {
+    var journal_count   = $("#journal_counter").val();
+    var total_debit   = 0.00;
+    var total_credit  = 0.00;
+    for(var i = 1; i<=journal_count;i++) {
+        var debit   = $("#debit_"+i).val();
+        var credit  = $("#credit_"+i).val();
+        if(debit!='') {
+            total_debit  += parseFloat(numberWithCommas(debit,'format'));
+        }
+        if(credit!='') {
+            total_credit += parseFloat(numberWithCommas(credit,'format'));
+        }
+    }
+   // total_gst_amount += (parseFloat(sub_total) * parseFloat(total_gst) / 100);
+    $("#hidden_debit").val(total_debit);
+    $("#hidden_credit").val(total_credit);
+    $("#total_debit").text(numberWithCommas(parseFloat(total_debit).toFixed(2),'normal'));
+    $("#total_credit").text(numberWithCommas(parseFloat(total_credit).toFixed(2),'normal'));
+}
+
+ function saveDraft() {
+  $(".btn").attr("disabled",true);
+    $.ajax({
+      type: "POST",
+      url: "<?php echo $this->sitePath.'transaction/journal/ajax-call'; ?>",
+      data: $('#add-journal').serialize(),
+      success: function (html) {
+          if(html=='success') {
+             $(".btn").attr("disabled",false);
+              window.location.href='<?php echo $this->sitePath; ?>transaction/journal';
+          } else {
+             $('#failure').html('<strong>Journal Entry cannot be saved as draft</strong>');
+             $('#failure').fadeIn(1000);
+             $('#failure').fadeOut(9000);
+             $(".btn").attr("disabled",false);
+          }
+      }
+    }); 
+ }
+
+ function numberWithCommas(x,action) {
+  if(action=='normal') {
+    var value = x.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+    return value;
+  } else if(action=='format')  {
+    var value  = x.replace(/\,/g,''); 
+    //alert(value);
+    return value;
+  }
+}
+
+ function numberWithCommasInput(x,id) {
+    //return false;
+    if(id=='') {
+        var x = x.replace(",","");
+        var amount = parseFloat(x).toFixed(2);
+        var value  = amount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+        return value;
+    } else {
+        $(".amount-align").on('keydown', function (e) { 
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                 // Allow: Ctrl+A
+                (e.keyCode == 65 && e.ctrlKey === true) || 
+                 // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)) {
+                     // let it happen, don't do anything
+                     return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+        var x = x.replace(",","");
+        var amount = parseFloat(x).toFixed(2);
+        var value  = amount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+        $("#"+id).val(value);
+    }
+}
+
+
+function refreshAccountList() {
+        var journal_count   = $("#journal_counter").val();
+        $.ajax({
+        type: "POST",
+        url: "<?php echo $this->sitePath.'transaction/journal/ajax-refresh'; ?>",
+        data: 'action=accountRefresh',
+        success: function (html) {
+                accountJson = $.parseJSON(html);
+                for(var i=1;i<=journal_count;i++) {
+                  var accountSelect = '';
+                  var accountValue = $("#account_type_"+i).val();
+                  var account_type = '<select name="account_type_'+i+ '" id="account_type_'+i+ '"  class="form-control" required><option value="">Select</option>';
+                    $.each(accountJson, function(){
+                        if(accountValue==this.id) 
+                            accountSelect = 'selected';
+                        else
+                            accountSelect = '';
+                        account_type += '<option value='+this.id+' '+accountSelect+'>'+this.account_name+'</option>'
+                   
+                    });
+                  account_type += '</select>';
+                  $("#accountRefresh"+i).html(account_type);
+                }
+        }
+      }); 
+}
+
+</script>
+<script type="text/javascript">
+   var btn = document.getElementById('file'),
+       sizeBox = document.getElementById('sizeBox'), // container for file size info
+       progress = document.getElementById('progress-bar'); // the element we're using for a progress bar
+
+window.onload = function() {
+
+    var uploader = new ss.SimpleUpload({
+          button: btn, // file upload button
+          url: "<?php echo $this->sitePath.'transaction/journal/ajax-upload/operation/add'; ?>", // server side handler
+          name: 'uploadfile', // upload parameter name        
+        //  progressUrl: 'extras/uploadProgress.php', // enables cross-browser progress support (more info below)
+          responseType: 'json',
+          allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'docx', 'pdf', 'doc'],
+          maxSize: 10240, // kilobytes
+          hoverClass: 'ui-state-hover',
+          focusClass: 'ui-state-focus',
+          disabledClass: 'ui-state-disabled',
+          onSubmit: function(filename, extension) {
+              this.setFileSizeBox(sizeBox); // designate this element as file size container
+              this.setProgressBar(progress); // designate as progress bar
+              $("#progress-bar").show();
+            },         
+          onComplete: function(filename, response) {
+              if (!response) {
+                  alert(filename + 'upload failed');
+                  return false;            
+              } else {
+                $("#progress-bar").hide();
+                var filename = response.data['file'];
+                var status = response.data['status'];
+                if(status=='success') {
+                  $(".view_remove_file").html("<a href='<?php echo $this->sitePath.$this->fileuploadpath; ?>"+ filename +"' target='_blank'>Click to View</a> &nbsp; <a href='javascript:void(0)'' title='Remove Attachment' data-title='Remove Attachment' onclick='removeAttachment();'><i class='icon-remove-sign'></i></a>");
+                  $("#attached_file").val(filename);
+                  $(".view_remove_file").show();
+                  $(".attach_file").show();
+                  $("input[name='uploadfile']").attr('disabled','disabled');  
+                } else if(status=='failure') {
+                  alert("Upload Error : "+filename);
+                  $("input[name='uploadfile']").removeAttr('disabled');
+                  return false;
+                } 
+
+              }
+
+                //console.log(filename);
+              // do something with response...
+            }
+    });     
+};
+
+function removeAttachment() {
+  var attachedFile = $("#attached_file").val();
+  if(attachedFile!='') {
+    var confirmMsg = confirm('Are you sure want to remove the attachment?');
+    if(confirmMsg) {
+      $.ajax({
+        type: "POST",
+        url: "<?php echo $this->sitePath.'transaction/journal/ajax-remove'; ?>",
+        data: 'action=fileRemove&id='+attachedFile,
+        success: function (html) {
+            if(html=='success') {
+              $("#attached_file").val('');
+              $(".view_remove_file").hide();
+              $(".attach_file").hide();
+              $("input[name='uploadfile']").removeAttr('disabled');
+              alert("File Removed Successfully");
+            } else {
+              alert("Unable to remove the attached file. Kindly try again later");
+            }
+        }
+      }); 
+    }
+  }
+}
+</script>
